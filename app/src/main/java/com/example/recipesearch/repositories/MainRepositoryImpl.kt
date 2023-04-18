@@ -1,6 +1,5 @@
 package com.example.recipesearch.repositories
 
-import com.example.recipesearch.model.Recipe
 import com.example.recipesearch.model.RecipeResult
 import com.example.recipesearch.network.RecipeApi
 

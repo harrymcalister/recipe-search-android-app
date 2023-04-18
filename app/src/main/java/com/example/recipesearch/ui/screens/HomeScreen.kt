@@ -41,7 +41,7 @@ fun HomeScreen(navController: NavController) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchBar(searchQuery: MutableState<String>, onSubmit: (String) -> Unit) {
+fun SearchBar(searchQuery: MutableState<String>, onSubmit: () -> Unit) {
     Row(Modifier.padding(16.dp)) {
         OutlinedTextField(
             value = searchQuery.value,
@@ -49,7 +49,7 @@ fun SearchBar(searchQuery: MutableState<String>, onSubmit: (String) -> Unit) {
             modifier = Modifier,
             placeholder = { Text(text = "Search for a recipe") },
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-            keyboardActions = KeyboardActions(onSearch = { onSubmit(searchQuery.value) }),
+            keyboardActions = KeyboardActions(onSearch = { onSubmit() }),
             singleLine = true,
             trailingIcon = {
                 Icon(

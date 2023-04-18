@@ -1,12 +1,10 @@
 package com.example.recipesearch.ui.viewmodels
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.recipesearch.model.RecipeResult
-import com.example.recipesearch.network.RecipeApi
 import com.example.recipesearch.repositories.MainRepositoryImpl
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
