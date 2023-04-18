@@ -1,5 +1,6 @@
 package com.example.recipesearch.ui.screens
 
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
@@ -12,6 +13,7 @@ fun RecipeScreen(navController: NavController) {
 @Composable
 fun RecipeScreenContent(navController: NavController) {
     Text(
-        text = "Recipe screen"
+        text = "Recipe screen",
+        style = MaterialTheme.typography.titleLarge
     )
 }

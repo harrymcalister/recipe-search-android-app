@@ -26,7 +26,10 @@ fun HomeScreen(navController: NavController) {
         }
     }
     Column {
-        Text(text = "Home Screen")
+        Text(
+            text = "Home Screen",
+            style = MaterialTheme.typography.titleLarge
+        )
         SearchBar(
             searchQuery = searchQuery,
             onSubmit = { submitQuery() }

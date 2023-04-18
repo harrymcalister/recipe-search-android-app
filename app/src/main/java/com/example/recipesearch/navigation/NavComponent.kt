@@ -4,10 +4,9 @@ import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,16 +28,8 @@ import com.example.recipesearch.ui.screens.SearchScreen
 @Composable
 fun NavComponent() {
     val navController = rememberNavController()
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(text = stringResource(getAppBarTitleResId(navBackStackEntry)))
-                }
-            )
-        }
+        topBar = { MyTopBar(navController = navController) }
     ) { innerPadding ->
         NavHost(
             modifier = Modifier.padding(innerPadding),
@@ -76,4 +67,29 @@ private fun getAppBarTitleResId(currentBackStackEntry: NavBackStackEntry?): Int 
         else -> R.string.search_screen_title
     }
     return resId
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MyTopBar(navController: NavController) {
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val isNotOnHomePage = when (navBackStackEntry?.destination?.route) {
+        null, "home" -> false
+        else -> true
+    }
+    if (isNotOnHomePage) {
+        TopAppBar(
+            title = {
+                Text(text = stringResource(getAppBarTitleResId(navBackStackEntry)))
+            },
+            navigationIcon = {
+                IconButton(onClick = { navController.popBackStack() }) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "Back"
+                    )
+                }
+            }
+        )
+    }
 }
