@@ -10,7 +10,7 @@ data class Recipe(
     val seoTitle: String,
     @SerializedName("video_id")
     val videoId: Any?,
-    val instructions: List<Any>,
+    val instructions: List<Instruction>,
     @SerializedName("draft_status")
     val draftStatus: String,
     @SerializedName("thumbnail_alt_text")
@@ -47,7 +47,7 @@ data class Recipe(
     val name: String,
     @SerializedName("created_at")
     val createdAt: Long,
-    val sections: List<Any>,
+    val sections: List<Components>,
     val compilations: List<Any>,
     @SerializedName("beauty_url")
     val beautyUrl: Any?,
@@ -87,4 +87,50 @@ data class Recipe(
     val aspectRatio: String,
     @SerializedName("updated_at")
     val updatedAt: Long
+)
+
+data class Components(
+    @SerializedName("components")
+    val ingredients: List<Ingredient>
+)
+
+data class Ingredient(
+    @SerializedName("raw_text")
+    val rawText: String?,
+    @SerializedName("ingredient")
+    val ingredientName: IngredientName,
+    @SerializedName("measurements")
+    val measurements: List<Measurement>
+)
+
+data class IngredientName(
+    @SerializedName("display_singular")
+    val displaySingular: String,
+    @SerializedName("display_plural")
+    val displayPlural: String
+)
+
+data class Measurement(
+    val unit: MeasurementUnit,
+    val quantity: String
+)
+
+data class MeasurementUnit(
+    val system: String,
+    val name: String,
+    val abbreviation: String,
+    @SerializedName("display_singular")
+    val displaySingular: String,
+    @SerializedName("display_plural")
+    val displayPlural: String
+)
+
+data class Instruction(
+    val position: Int,
+    @SerializedName("display_text")
+    val displayText: String,
+    @SerializedName("start_time")
+    val startTime: Int,
+    @SerializedName("end_time")
+    val endTime: Int
 )
