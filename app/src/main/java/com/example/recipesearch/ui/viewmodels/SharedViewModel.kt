@@ -43,7 +43,10 @@ class SharedViewModel(
             withContext(Dispatchers.Main) {
                 _recipes.value = queryResult
                 _queryState.value = resolvedQueryState
-                Log.e("SharedViewModel.kt", recipes.value?.count.toString())
+
+                Log.e("SharedViewModel.kt", "Query state updated to ${_queryState.value}")
+
+//                Log.e("SharedViewModel.kt", recipes.value?.results?.get(0)?.sections?.get(0).components.toString())
             }
         }
     }
