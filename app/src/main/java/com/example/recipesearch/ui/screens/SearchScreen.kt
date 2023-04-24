@@ -12,7 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,6 +28,7 @@ import com.example.recipesearch.repositories.MainRepositoryImpl
 import com.example.recipesearch.ui.viewmodels.SharedViewModel
 import com.example.recipesearch.ui.viewmodels.SharedViewModelFactory
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.style.TextOverflow
 import com.example.recipesearch.model.RecipeResult
 
 @Composable
@@ -51,7 +51,7 @@ fun SearchScreen(
             LoadingScreen()
         }
         SharedViewModel.QueryState.SUCCESS -> {
-            TestCards(viewModel.recipes.value)
+            RecipesList(viewModel.recipes.value!!.results)
         }
         else -> {
             Text(text = "There was an error with retrieving the recipe data")
@@ -151,7 +151,7 @@ fun RecipesList(recipes: List<Recipe>) {
 @OptIn(ExperimentalCoilApi::class)
 @Composable
 fun RecipesListItem(recipe: Recipe) {
-    val cornerSizeAsPx = LocalDensity.current.run{ 12.dp.toPx() }
+    val cornerSizeAsPx = LocalDensity.current.run { 12.dp.toPx() }
     val coilPainter = rememberImagePainter(
         data = recipe.thumbnailUrl,
         builder = { transformations(RoundedCornersTransformation(cornerSizeAsPx)) }
@@ -163,15 +163,18 @@ fun RecipesListItem(recipe: Recipe) {
         ),
         border = BorderStroke(1.dp, Color.LightGray),
         modifier = Modifier
+//            .padding(all = 8.dp)
             .fillMaxWidth()
     ) {
-        Row {
+        Row(modifier = Modifier
+            .padding(all = 8.dp)
+            .fillMaxSize()
+        ) {
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
-                    .fillMaxWidth(0.4f)
+                    .height(164.dp)
                     .aspectRatio(1f)
-                    .padding(8.dp)
             ) {
                 Image(
                     painter = coilPainter,
@@ -180,23 +183,31 @@ fun RecipesListItem(recipe: Recipe) {
                         .fillMaxSize()
                 )
             }
-            Column(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .fillMaxWidth(0.6f)
+            Column(modifier = Modifier
+                .padding(start = 8.dp)
+                .height(164.dp)
             ) {
-                Text(
-                    text = recipe.name,
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight(500),
-                    modifier = Modifier.padding(PaddingValues(top = 8.dp, start = 8.dp, end = 8.dp))
-                )
-                Text(
-                    text = recipe.description,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight(200),
-                    modifier = Modifier.padding(PaddingValues(top = 8.dp, start = 8.dp, end = 8.dp))
-                )
+                recipe.name?.let {
+                    Text(
+                        text = recipe.name,
+                        overflow = TextOverflow.Ellipsis,
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight(600),
+                        modifier = Modifier
+                            .padding(bottom = 4.dp)
+                            .fillMaxWidth()
+                    )
+                }
+                recipe.description?.let {
+                    Text(
+                        text = it,
+                        overflow = TextOverflow.Ellipsis,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight(300),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    )
+                }
             }
         }
     }

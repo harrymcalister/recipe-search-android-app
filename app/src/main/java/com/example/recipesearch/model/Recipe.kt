@@ -44,7 +44,7 @@ data class Recipe(
     val nutritionVisibility: String,
     @SerializedName("servings_noun_singular")
     val servingsNounSingular: String,
-    val name: String,
+    val name: String?,
     @SerializedName("created_at")
     val createdAt: Long,
     val sections: List<Components>,
@@ -61,7 +61,7 @@ data class Recipe(
     val prepTimeMinutes: Int,
     @SerializedName("cook_time_minutes")
     val cookTimeMinutes: Int,
-    val description: String,
+    val description: String?,
     @SerializedName("inspired_by_url")
     val inspiredByUrl: Any?,
     val topics: List<Any>,
@@ -78,7 +78,7 @@ data class Recipe(
     val slug: String,
     val nutrition: Any,
     @SerializedName("thumbnail_url")
-    val thumbnailUrl: String,
+    val thumbnailUrl: String?,
     val yields: String,
     val id: Int,
     @SerializedName("num_servings")
