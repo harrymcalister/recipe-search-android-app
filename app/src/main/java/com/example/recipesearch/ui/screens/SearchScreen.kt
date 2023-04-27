@@ -3,6 +3,7 @@ package com.example.recipesearch.ui.screens
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -14,7 +15,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -28,7 +33,14 @@ import com.example.recipesearch.repositories.MainRepositoryImpl
 import com.example.recipesearch.ui.viewmodels.SharedViewModel
 import com.example.recipesearch.ui.viewmodels.SharedViewModelFactory
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import coil.compose.AsyncImagePainter
+import coil.compose.SubcomposeAsyncImage
+import coil.request.ImageRequest
+import com.example.recipesearch.R
 import com.example.recipesearch.model.RecipeResult
 
 @Composable
@@ -151,22 +163,24 @@ fun RecipesList(recipes: List<Recipe>) {
 @OptIn(ExperimentalCoilApi::class)
 @Composable
 fun RecipesListItem(recipe: Recipe) {
-    val cornerSizeAsPx = LocalDensity.current.run { 12.dp.toPx() }
-    val coilPainter = rememberImagePainter(
-        data = recipe.thumbnailUrl,
-        builder = { transformations(RoundedCornersTransformation(cornerSizeAsPx)) }
+    val cardBackgroundGradient = Brush.verticalGradient(
+        listOf(
+            colorResource(id = R.color.light_gray),
+            colorResource(id = R.color.white)
+        )
     )
+
     Card(
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(
             defaultElevation = 2.dp
         ),
-        border = BorderStroke(1.dp, Color.LightGray),
+        border = BorderStroke(1.dp, Color.Gray),
         modifier = Modifier
-//            .padding(all = 8.dp)
             .fillMaxWidth()
     ) {
         Row(modifier = Modifier
+            .background(cardBackgroundGradient)
             .padding(all = 8.dp)
             .fillMaxSize()
         ) {
@@ -176,10 +190,23 @@ fun RecipesListItem(recipe: Recipe) {
                     .height(164.dp)
                     .aspectRatio(1f)
             ) {
-                Image(
-                    painter = coilPainter,
+                SubcomposeAsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(recipe.thumbnailUrl)
+                        .build(),
                     contentDescription = "Recipe image",
+                    loading = {
+                        CircularProgressIndicator(
+                            color = Color.Gray,
+                            strokeWidth = 2.dp,
+                            modifier = Modifier
+                                .fillMaxSize(0.1f)
+                                .padding(4.dp)
+                        )
+                    },
+                    contentScale = ContentScale.Crop,
                     modifier = Modifier
+                        .clip(RoundedCornerShape(12.dp))
                         .fillMaxSize()
                 )
             }
