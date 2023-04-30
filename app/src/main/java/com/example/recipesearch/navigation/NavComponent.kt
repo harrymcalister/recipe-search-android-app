@@ -14,20 +14,27 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.*
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.recipesearch.R
+import com.example.recipesearch.repositories.MainRepositoryImpl
 import com.example.recipesearch.ui.screens.HomeScreen
 import com.example.recipesearch.ui.screens.RecipeScreen
 import com.example.recipesearch.ui.screens.SearchScreen
+import com.example.recipesearch.ui.viewmodels.SharedViewModel
+import com.example.recipesearch.ui.viewmodels.SharedViewModelFactory
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NavComponent() {
     val navController = rememberNavController()
+    val sharedViewModel: SharedViewModel = viewModel(
+        factory = SharedViewModelFactory(repository = MainRepositoryImpl)
+    )
     Scaffold(
         topBar = { MyTopBar(navController = navController) }
     ) { innerPadding ->
@@ -37,7 +44,10 @@ fun NavComponent() {
             startDestination = Route.HomeScreenRoute.route
         ) {
             composable(route = Route.HomeScreenRoute.route) {
-                HomeScreen(navController = navController)
+                HomeScreen(
+                    viewModel = sharedViewModel,
+                    navController = navController
+                )
             }
             composable(
                 route = Route.SearchScreenRoute.route + "/{query}",
@@ -49,12 +59,25 @@ fun NavComponent() {
                 )
             ) { backStackEntry ->
                 SearchScreen(
+                    viewModel = sharedViewModel,
                     navController = navController,
                     query = backStackEntry.arguments!!.getString("query")!!
                 )
             }
-            composable(route = Route.RecipeScreenRoute.route) {
-                RecipeScreen(navController = navController)
+            composable(
+                route = Route.RecipeScreenRoute.route + "/{recipesIndex}",
+                arguments = listOf(
+                    navArgument("recipesIndex") {
+                        type = NavType.IntType
+                        nullable = false
+                    }
+                )
+            ) { backStackEntry ->
+                RecipeScreen(
+                    viewModel = sharedViewModel,
+                    navController = navController,
+                    recipesIndex = backStackEntry.arguments!!.getInt("recipesIndex")
+                )
             }
         }
     }

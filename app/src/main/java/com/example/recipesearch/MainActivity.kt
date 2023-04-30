@@ -15,6 +15,7 @@ import com.example.recipesearch.ui.theme.RecipeSearchTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             AppContent()
         }

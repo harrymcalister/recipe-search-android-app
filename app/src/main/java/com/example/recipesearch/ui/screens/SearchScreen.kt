@@ -2,11 +2,11 @@ package com.example.recipesearch.ui.screens
 
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -26,36 +26,37 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.annotation.ExperimentalCoilApi
-import coil.compose.rememberImagePainter
-import coil.transform.RoundedCornersTransformation
 import com.example.recipesearch.model.Recipe
 import com.example.recipesearch.repositories.MainRepositoryImpl
 import com.example.recipesearch.ui.viewmodels.SharedViewModel
 import com.example.recipesearch.ui.viewmodels.SharedViewModelFactory
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import coil.compose.AsyncImagePainter
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
 import com.example.recipesearch.R
 import com.example.recipesearch.model.RecipeResult
+import com.example.recipesearch.navigation.Route
 
 @Composable
 fun SearchScreen(
+    viewModel: SharedViewModel,
     navController: NavController,
     query: String
 ) {
-    val viewModel: SharedViewModel = viewModel(
-        factory = SharedViewModelFactory(MainRepositoryImpl)
-    )
+    LaunchedEffect(Unit) {
+        if (viewModel.recipes.value == null) {
+            viewModel.fetchRecipes(query)
+        }
+    }
+
     val queryState by viewModel.queryState.observeAsState()
 
-    LaunchedEffect(Unit) {
-        Log.e("SearchScreen.kt", "launchedEffect initiated")
-        viewModel.fetchRecipes(query)
+    val navigateToRecipeScreen: (Int) -> Unit = { recipesIndex ->
+        Log.d("SearchScreen.kt", viewModel.toString())
+        navController.navigate(Route.RecipeScreenRoute.withArgs(recipesIndex.toString())) {
+            launchSingleTop = true
+        }
     }
 
     when (queryState) {
@@ -63,7 +64,10 @@ fun SearchScreen(
             LoadingScreen()
         }
         SharedViewModel.QueryState.SUCCESS -> {
-            RecipesList(viewModel.recipes.value!!.results)
+            RecipesList(
+                recipes = viewModel.recipes.value!!.results,
+                onRecipeClick = navigateToRecipeScreen
+            )
         }
         else -> {
             Text(text = "There was an error with retrieving the recipe data")
@@ -144,25 +148,31 @@ fun TestCards(value: RecipeResult?) {
         updatedAt = 0L
     )
     val recipesList: List<Recipe> = listOf(recipeInstance,recipeInstance,recipeInstance,recipeInstance,recipeInstance,recipeInstance)
-    RecipesList(recipesList)
+//    RecipesList(recipesList, )
 }
 
 @Composable
-fun RecipesList(recipes: List<Recipe>) {
+fun RecipesList(
+    recipes: List<Recipe>,
+    onRecipeClick: (Int) -> Unit
+) {
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         contentPadding = PaddingValues(16.dp),
         modifier = Modifier.fillMaxSize()
     ) {
-        items(recipes) {
-            RecipesListItem(it)
+        itemsIndexed(recipes) { index, recipe ->
+            RecipesListItem(
+                onRecipeClick = { onRecipeClick(index) },
+                recipe = recipe
+            )
         }
     }
 }
 
 @OptIn(ExperimentalCoilApi::class)
 @Composable
-fun RecipesListItem(recipe: Recipe) {
+fun RecipesListItem(onRecipeClick: () -> Unit, recipe: Recipe) {
     val cardBackgroundGradient = Brush.verticalGradient(
         listOf(
             colorResource(id = R.color.light_gray),
@@ -178,6 +188,7 @@ fun RecipesListItem(recipe: Recipe) {
         border = BorderStroke(1.dp, Color.Gray),
         modifier = Modifier
             .fillMaxWidth()
+            .clickable { onRecipeClick() }
     ) {
         Row(modifier = Modifier
             .background(cardBackgroundGradient)

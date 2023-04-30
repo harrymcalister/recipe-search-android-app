@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.recipesearch.model.Recipe
 import com.example.recipesearch.model.RecipeResult
 import com.example.recipesearch.repositories.MainRepositoryImpl
 import kotlinx.coroutines.Dispatchers
@@ -35,7 +36,7 @@ class SharedViewModel(
             try {
                 queryResult = repository.getRecipes(query)
                 resolvedQueryState = QueryState.SUCCESS
-                Log.e("SharedViewModel.kt", "Query retrieved successfully")
+                Log.d("SharedViewModel.kt", "Query retrieved successfully")
             } catch (e: Exception) {
                 resolvedQueryState = QueryState.ERROR
                 Log.e("SharedViewModel.kt", "Query failed: $e")
@@ -43,11 +44,13 @@ class SharedViewModel(
             withContext(Dispatchers.Main) {
                 _recipes.value = queryResult
                 _queryState.value = resolvedQueryState
-
-                Log.e("SharedViewModel.kt", "Query state updated to ${_queryState.value}")
-
-//                Log.e("SharedViewModel.kt", recipes.value?.results?.get(0)?.sections?.get(0).components.toString())
+                Log.d("SharedViewModel.kt", "Query state updated to ${_queryState.value}")
             }
         }
+    }
+
+    fun clearRecipes() {
+        _recipes.value = null
+        _queryState.value = QueryState.LOADING
     }
 }

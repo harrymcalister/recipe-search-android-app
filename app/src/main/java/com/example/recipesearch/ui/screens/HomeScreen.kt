@@ -27,20 +27,26 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.recipesearch.navigation.Route
+import com.example.recipesearch.ui.viewmodels.SharedViewModel
 
 @Composable
-fun HomeScreen(navController: NavController) {
+fun HomeScreen(
+    viewModel: SharedViewModel,
+    navController: NavController
+) {
+    LaunchedEffect(Unit) {
+        viewModel.clearRecipes()
+    }
+
     val searchQuery = remember { mutableStateOf("") }
     val focusManager = LocalFocusManager.current
 
-    fun submitQuery() {
+    val submitQuery: () -> Unit = {
         if (searchQuery.value.isNotBlank()) {
             focusManager.clearFocus()
             navController.navigate(Route.SearchScreenRoute.withArgs(searchQuery.value)) {
                 launchSingleTop = true
             }
-            Log.e("HomeScreen.kt","fetch initiated")
-
         }
     }
     Box(
@@ -62,10 +68,10 @@ fun HomeScreen(navController: NavController) {
             )
             SearchBar(
                 searchQuery = searchQuery,
-                onSubmit = { submitQuery() }
+                onSubmit = submitQuery
             )
             Button(
-                onClick = { submitQuery() }
+                onClick = submitQuery
             ) {
                 Text(text = "Submit")
             }
