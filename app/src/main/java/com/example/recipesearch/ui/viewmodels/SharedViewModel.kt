@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import coil.compose.AsyncImagePainter
 import com.example.recipesearch.model.Recipe
 import com.example.recipesearch.model.RecipeResult
 import com.example.recipesearch.repositories.MainRepositoryImpl
@@ -15,6 +16,9 @@ import kotlinx.coroutines.withContext
 class SharedViewModel(
     private val repository: MainRepositoryImpl
 ) : ViewModel() {
+
+    private var _selectedRecipeImagePainter = MutableLiveData<AsyncImagePainter?>(null)
+    val selectedRecipeImagePainter: LiveData<AsyncImagePainter?> = _selectedRecipeImagePainter
 
     private var _recipes = MutableLiveData<RecipeResult?>(null)
     val recipes: LiveData<RecipeResult?> = _recipes
@@ -52,5 +56,9 @@ class SharedViewModel(
     fun clearRecipes() {
         _recipes.value = null
         _queryState.value = QueryState.LOADING
+    }
+
+    fun setSelectedRecipeImagePainter(painter: AsyncImagePainter) {
+        _selectedRecipeImagePainter.value = painter
     }
 }
