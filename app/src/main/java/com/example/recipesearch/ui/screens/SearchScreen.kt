@@ -1,5 +1,6 @@
 package com.example.recipesearch.ui.screens
 
+import android.content.res.Resources
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -88,77 +89,12 @@ fun LoadingScreen() {
 }
 
 @Composable
-fun TestCards(value: RecipeResult?) {
-    val recipeInstance: Recipe = Recipe(
-        renditions = emptyList(),
-        totalTimeTier = Any(),
-        seoTitle = "",
-        videoId = null,
-        instructions = emptyList(),
-        draftStatus = "",
-        thumbnailAltText = "",
-        credits = emptyList(),
-        promotion = "",
-        facebookPosts = emptyList(),
-        brand = null,
-        show = Any(),
-        isOneTop = false,
-        totalTimeMinutes = 0,
-        servingsNounPlural = "",
-        isShoppable = false,
-        price = Any(),
-        showId = 0,
-        buzzId = null,
-        tipsAndRatingsEnabled = false,
-        videoUrl = null,
-        approvedAt = 0L,
-        nutritionVisibility = "",
-        servingsNounSingular = "",
-        name = "Test name",
-        createdAt = 0L,
-        sections = emptyList(),
-        compilations = emptyList(),
-        beautyUrl = null,
-        originalVideoUrl = null,
-        country = "",
-        keywords = "",
-        seoPath = null,
-        prepTimeMinutes = 0,
-        cookTimeMinutes = 0,
-        description = "This recipe description is a sample recipe description",
-        inspiredByUrl = null,
-        topics = emptyList(),
-        videoAdContent = null,
-        language = "",
-        userRatings = Any(),
-        brandId = null,
-        tags = emptyList(),
-        canonicalId = "",
-        slug = "",
-        nutrition = Any(),
-        thumbnailUrl = "https://images.unsplash.com/photo-1628373383885-4be0bc0172fa?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1301&q=80",
-        yields = "",
-        id = 0,
-        numServings = 0,
-        aspectRatio = "",
-        updatedAt = 0L
-    )
-    val recipesList: List<Recipe> = listOf(recipeInstance,recipeInstance,recipeInstance,recipeInstance,recipeInstance,recipeInstance)
-//    RecipesList(recipesList, )
-}
-
-@Composable
 fun RecipesList(
     viewModel: SharedViewModel,
     navController: NavController
 ) {
-    val navigateToRecipeScreen: (Int) -> Unit = { recipesIndex ->
-        navController.navigate(Route.RecipeScreenRoute.withArgs(recipesIndex.toString())) {
-            launchSingleTop = true
-        }
-    }
     LazyColumn(
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
         contentPadding = PaddingValues(16.dp),
         modifier = Modifier.fillMaxSize()
     ) {
@@ -173,7 +109,6 @@ fun RecipesList(
     }
 }
 
-@OptIn(ExperimentalCoilApi::class)
 @Composable
 fun RecipesListItem(
     viewModel: SharedViewModel,
@@ -181,13 +116,6 @@ fun RecipesListItem(
     recipesListIndex: Int,
     recipe: Recipe
 ) {
-    val cardBackgroundGradient = Brush.verticalGradient(
-        listOf(
-            colorResource(id = R.color.light_gray),
-            colorResource(id = R.color.white)
-        )
-    )
-
     var imagePainter by remember { mutableStateOf<AsyncImagePainter?>(null) }
 
     val navigateToRecipeScreen: (Int) -> Unit = { recipesIndex ->
@@ -197,35 +125,17 @@ fun RecipesListItem(
         }
     }
 
-//    val imageLoadState = remember {
-//        mutableStateOf<AsyncImagePainter.State>(AsyncImagePainter.State.Loading(null))
-//    }
-//    val imagePainter = rememberAsyncImagePainter(
-//        model = ImageRequest.Builder(LocalContext.current)
-//            .data(recipe.thumbnailUrl)
-//            .build(),
-//        onState = { newState -> imageLoadState.value = newState }
-//    )
-
-//    LaunchedEffect(Unit) {
-//        imagePainter
-//    }
-//    LaunchedEffect(imagePainter.state) {
-//        imageLoadState.value = imagePainter.state
-//    }
-
     Card(
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(
-            defaultElevation = 2.dp
+            defaultElevation = 4.dp
         ),
-        border = BorderStroke(1.dp, Color.Gray),
         modifier = Modifier
             .fillMaxWidth()
             .clickable { navigateToRecipeScreen(recipesListIndex) }
     ) {
         Row(modifier = Modifier
-            .background(cardBackgroundGradient)
+            .background(color = MaterialTheme.colorScheme.background)
             .padding(all = 8.dp)
             .fillMaxSize()
         ) {
@@ -235,38 +145,6 @@ fun RecipesListItem(
                     .height(164.dp)
                     .aspectRatio(1f)
             ) {
-
-//                AsyncImage(
-//                    model = imagePainter,
-//                    contentDescription = "Recipe image",
-//                    contentScale = ContentScale.Crop,
-//                    modifier = Modifier
-//                        .clip(RoundedCornerShape(12.dp))
-//                        .fillMaxSize()
-//                )
-////                Image(
-////                    painter = imagePainter,
-////                    contentDescription = "My Image",
-////                    contentScale = ContentScale.Crop,
-////                    modifier = Modifier
-////                        .clip(RoundedCornerShape(12.dp))
-////                        .fillMaxSize()
-////                )
-//                when (imageLoadState.value) {
-//                    is AsyncImagePainter.State.Success -> {}
-//                    is AsyncImagePainter.State.Loading -> {
-//                        CircularProgressIndicator(
-//                            color = Color.Gray,
-//                            strokeWidth = 2.dp,
-//                            modifier = Modifier
-//                                .fillMaxSize(0.1f)
-//                                .padding(4.dp)
-//                        )
-//                    }
-//                    else -> {
-//                        Text(text = "Error loading image")
-//                    }
-//                }
                 SubcomposeAsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
                         .data(recipe.thumbnailUrl)
@@ -274,9 +152,8 @@ fun RecipesListItem(
                     contentDescription = "Recipe image",
                     contentScale = ContentScale.Crop
                 ) {
-                    Log.e("SearchScreen.kt before", imagePainter.toString())
                     imagePainter = painter
-                    Log.e("SearchScreen.kt after", imagePainter.toString())
+
                     when (imagePainter!!.state) {
                         is AsyncImagePainter.State.Success ->
                             SubcomposeAsyncImageContent(
@@ -294,26 +171,6 @@ fun RecipesListItem(
                             )
                     }
                 }
-//                SubcomposeAsyncImage(
-//                    model = imagePainter,
-//                    contentDescription = "Recipe image",
-//                    loading = {
-//                        CircularProgressIndicator(
-//                            color = Color.Gray,
-//                            strokeWidth = 2.dp,
-//                            modifier = Modifier
-//                                .fillMaxSize(0.1f)
-//                                .padding(4.dp)
-//                        )
-//                    },
-//                    error = {
-//                        Text(text = "Error loading image")
-//                    },
-//                    contentScale = ContentScale.Crop,
-//                    modifier = Modifier
-//                        .clip(RoundedCornerShape(12.dp))
-//                        .fillMaxSize()
-//                )
             }
             Column(modifier = Modifier
                 .padding(start = 8.dp)

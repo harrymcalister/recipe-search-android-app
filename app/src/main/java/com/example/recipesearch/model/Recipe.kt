@@ -1,5 +1,6 @@
 package com.example.recipesearch.model
 
+import android.icu.util.Measure
 import com.google.gson.annotations.SerializedName
 
 data class Recipe(
@@ -115,8 +116,14 @@ data class Measurement(
     val quantity: String
 )
 
+enum class MeasurementSystem(system: String) {
+    METRIC("metric"),
+    IMPERIAL("imperial"),
+    NONE("none")
+}
+
 data class MeasurementUnit(
-    val system: String,
+    val system: MeasurementSystem,
     val name: String,
     val abbreviation: String,
     @SerializedName("display_singular")
