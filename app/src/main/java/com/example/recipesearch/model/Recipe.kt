@@ -1,6 +1,6 @@
 package com.example.recipesearch.model
 
-import android.icu.util.Measure
+import com.example.recipesearch.database.savedrecipe.SavedRecipe
 import com.google.gson.annotations.SerializedName
 
 data class Recipe(
@@ -81,7 +81,8 @@ data class Recipe(
     @SerializedName("thumbnail_url")
     val thumbnailUrl: String?,
     val yields: String,
-    val id: Int,
+    @SerializedName("id")
+    val recipeApiId: Int,
     @SerializedName("num_servings")
     val numServings: Int,
     @SerializedName("aspect_ratio")
@@ -141,3 +142,61 @@ data class Instruction(
     @SerializedName("end_time")
     val endTime: Int
 )
+
+fun Recipe.toSavedRecipe(): SavedRecipe {
+    return SavedRecipe(
+        renditions = this.renditions,
+        totalTimeTier = this.totalTimeTier,
+        seoTitle = this.seoTitle,
+        videoId = this.videoId,
+        instructions = this.instructions,
+        draftStatus = this.draftStatus,
+        thumbnailAltText = this.thumbnailAltText,
+        credits = this.credits,
+        promotion = this.promotion,
+        facebookPosts = this.facebookPosts,
+        brand = this.brand,
+        show = this.show,
+        isOneTop = this.isOneTop,
+        totalTimeMinutes = this.totalTimeMinutes,
+        servingsNounPlural = this.servingsNounPlural,
+        isShoppable = this.isShoppable,
+        price = this.price,
+        showId = this.showId,
+        buzzId = this.buzzId,
+        tipsAndRatingsEnabled = this.tipsAndRatingsEnabled,
+        videoUrl = this.videoUrl,
+        approvedAt = this.approvedAt,
+        nutritionVisibility = this.nutritionVisibility,
+        servingsNounSingular = this.servingsNounSingular,
+        name = this.name,
+        createdAt = this.createdAt,
+        sections = this.sections,
+        compilations = this.compilations,
+        beautyUrl = this.beautyUrl,
+        originalVideoUrl = this.originalVideoUrl,
+        country = this.country,
+        keywords = this.keywords,
+        seoPath = this.seoPath,
+        prepTimeMinutes = this.prepTimeMinutes,
+        cookTimeMinutes = this.cookTimeMinutes,
+        description = this.description,
+        inspiredByUrl = this.inspiredByUrl,
+        topics = this.topics,
+        videoAdContent = this.videoAdContent,
+        language = this.language,
+        userRatings = this.userRatings,
+        brandId = this.brandId,
+        tags = this.tags,
+        canonicalId = this.canonicalId,
+        slug = this.slug,
+        nutrition = this.nutrition,
+        thumbnailUrl = this.thumbnailUrl,
+        yields = this.yields,
+        recipeApiId = this.recipeApiId,
+        numServings = this.numServings,
+        aspectRatio = this.aspectRatio,
+        updatedAt = this.updatedAt
+    )
+}
+

@@ -33,7 +33,10 @@ import com.example.recipesearch.ui.viewmodels.SharedViewModelFactory
 fun NavComponent() {
     val navController = rememberNavController()
     val sharedViewModel: SharedViewModel = viewModel(
-        factory = SharedViewModelFactory(repository = MainRepositoryImpl)
+        factory = SharedViewModelFactory(
+            repository = MainRepositoryImpl,
+            context = LocalContext.current
+        )
     )
     Scaffold(
         topBar = { MyTopBar(navController = navController) }

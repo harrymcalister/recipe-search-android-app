@@ -1,6 +1,8 @@
 package com.example.recipesearch.ui.viewmodels
 
+import android.content.Context
 import android.util.Log
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -14,8 +16,13 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class SharedViewModel(
-    private val repository: MainRepositoryImpl
+    private val repository: MainRepositoryImpl,
+    context: Context
 ) : ViewModel() {
+
+    init {
+        MainRepositoryImpl.initialise(context = context)
+    }
 
     private var _selectedRecipeImagePainter = MutableLiveData<AsyncImagePainter?>(null)
     val selectedRecipeImagePainter: LiveData<AsyncImagePainter?> = _selectedRecipeImagePainter
@@ -41,6 +48,11 @@ class SharedViewModel(
                 queryResult = repository.getRecipes(query)
                 resolvedQueryState = QueryState.SUCCESS
                 Log.d("SharedViewModel.kt", "Query retrieved successfully")
+                val databaseSizeBefore = repository.getAllSavedRecipes().size
+                Log.d("SharedViewModel.kt", "Saved recipes size before: $databaseSizeBefore")
+                repository.insertSavedRecipe(queryResult.results[1])
+                val databaseSizeAfter = repository.getAllSavedRecipes().size
+                Log.d("SharedViewModel.kt", "Saved recipes size after: $databaseSizeAfter")
             } catch (e: Exception) {
                 resolvedQueryState = QueryState.ERROR
                 Log.e("SharedViewModel.kt", "Query failed: $e")
