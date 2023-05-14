@@ -32,6 +32,7 @@ import com.example.recipesearch.repositories.MainRepositoryImpl
 import com.example.recipesearch.ui.viewmodels.SharedViewModel
 import com.example.recipesearch.ui.viewmodels.SharedViewModelFactory
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role.Companion.Image
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -134,10 +135,11 @@ fun RecipesListItem(
             .fillMaxWidth()
             .clickable { navigateToRecipeScreen(recipesListIndex) }
     ) {
-        Row(modifier = Modifier
-            .background(color = MaterialTheme.colorScheme.background)
-            .padding(all = 8.dp)
-            .fillMaxSize()
+        Row(
+            modifier = Modifier
+                .background(color = MaterialTheme.colorScheme.background)
+                .padding(all = 8.dp)
+                .fillMaxSize()
         ) {
             Box(
                 contentAlignment = Alignment.Center,
@@ -172,19 +174,31 @@ fun RecipesListItem(
                     }
                 }
             }
-            Column(modifier = Modifier
-                .padding(start = 8.dp)
-                .height(164.dp)
+            Column(
+                modifier = Modifier
+                    .padding(start = 8.dp, end = 0.dp, top = 0.dp, bottom = 0.dp)
+                    .height(164.dp)
             ) {
-                recipe.name?.let {
-                    Text(
-                        text = recipe.name,
-                        overflow = TextOverflow.Ellipsis,
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight(600),
-                        modifier = Modifier
-                            .padding(bottom = 4.dp)
-                            .fillMaxWidth()
+                Row(
+                    modifier = Modifier
+                        .padding(bottom = 4.dp)
+                        .fillMaxWidth()
+                ) {
+                    recipe.name?.let {
+                        Text(
+                            text = recipe.name,
+                            overflow = TextOverflow.Ellipsis,
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight(600),
+                            modifier = Modifier
+                                .padding(vertical = 0.dp)
+                                .fillMaxWidth(0.85f)
+                        )
+                    }
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_favourite_outline_24),
+                        contentDescription = "Favourite icon",
+                        modifier = Modifier.size(24.dp)
                     )
                 }
                 recipe.description?.let {
