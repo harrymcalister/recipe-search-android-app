@@ -30,7 +30,7 @@ data class Recipe(
     val servingsNounPlural: String,
     @SerializedName("is_shoppable")
     val isShoppable: Boolean,
-    val price: Any,
+    val price: Any?,
     @SerializedName("show_id")
     val showId: Int,
     @SerializedName("buzz_id")

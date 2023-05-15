@@ -5,6 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.example.recipesearch.model.Components
 import com.example.recipesearch.model.Instruction
+import com.example.recipesearch.model.Recipe
 
 @Entity(tableName = "recipes")
 data class SavedRecipe(
@@ -62,3 +63,60 @@ data class SavedRecipe(
     @ColumnInfo(name = "aspect_ratio") val aspectRatio: String,
     @ColumnInfo(name = "updated_at") val updatedAt: Long
 )
+
+fun SavedRecipe.toRecipe(): Recipe {
+    return Recipe(
+        renditions = this.renditions,
+        totalTimeTier = this.totalTimeTier,
+        seoTitle = this.seoTitle,
+        videoId = this.videoId,
+        instructions = this.instructions,
+        draftStatus = this.draftStatus,
+        thumbnailAltText = this.thumbnailAltText,
+        credits = this.credits,
+        promotion = this.promotion,
+        facebookPosts = this.facebookPosts,
+        brand = this.brand,
+        show = this.show,
+        isOneTop = this.isOneTop,
+        totalTimeMinutes = this.totalTimeMinutes,
+        servingsNounPlural = this.servingsNounPlural,
+        isShoppable = this.isShoppable,
+        price = this.price,
+        showId = this.showId,
+        buzzId = this.buzzId,
+        tipsAndRatingsEnabled = this.tipsAndRatingsEnabled,
+        videoUrl = this.videoUrl,
+        approvedAt = this.approvedAt,
+        nutritionVisibility = this.nutritionVisibility,
+        servingsNounSingular = this.servingsNounSingular,
+        name = this.name,
+        createdAt = this.createdAt,
+        sections = this.sections,
+        compilations = this.compilations,
+        beautyUrl = this.beautyUrl,
+        originalVideoUrl = this.originalVideoUrl,
+        country = this.country,
+        keywords = this.keywords,
+        seoPath = this.seoPath,
+        prepTimeMinutes = this.prepTimeMinutes,
+        cookTimeMinutes = this.cookTimeMinutes,
+        description = this.description,
+        inspiredByUrl = this.inspiredByUrl,
+        topics = this.topics,
+        videoAdContent = this.videoAdContent,
+        language = this.language,
+        userRatings = this.userRatings,
+        brandId = this.brandId,
+        tags = this.tags,
+        canonicalId = this.canonicalId,
+        slug = this.slug,
+        nutrition = this.nutrition,
+        thumbnailUrl = this.thumbnailUrl,
+        yields = this.yields,
+        recipeApiId = this.recipeApiId,
+        numServings = this.numServings,
+        aspectRatio = this.aspectRatio,
+        updatedAt = this.updatedAt
+    )
+}

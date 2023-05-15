@@ -8,8 +8,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import coil.compose.AsyncImagePainter
+import com.example.recipesearch.database.savedrecipe.SavedRecipe
 import com.example.recipesearch.model.Recipe
 import com.example.recipesearch.model.RecipeResult
+import com.example.recipesearch.model.toSavedRecipe
 import com.example.recipesearch.repositories.MainRepositoryImpl
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -33,41 +35,87 @@ class SharedViewModel(
     private var _queryState = MutableLiveData(QueryState.LOADING)
     val queryState: LiveData<QueryState> = _queryState
 
+    private var _savedRecipes = MutableLiveData<MutableList<Recipe>>(mutableListOf())
+    val savedRecipes: LiveData<MutableList<Recipe>> = _savedRecipes
+
     enum class QueryState {
         LOADING,
         SUCCESS,
         ERROR
     }
 
-    fun fetchRecipes(query: String) {
+    fun fetchRecipes(
+        query: String = "",
+        getApiResult: Boolean,
+        getDbResult: Boolean
+    ) {
         _queryState.value = QueryState.LOADING
         viewModelScope.launch(Dispatchers.IO) {
-            var queryResult: RecipeResult? = null
+            var apiResult: RecipeResult? = null
+            var dbResult: List<Recipe> = listOf()
             var resolvedQueryState: QueryState
             try {
-                queryResult = repository.getRecipes(query)
+                // Fetch searched recipes from API
+                if (getApiResult) { apiResult = repository.getRecipes(query) }
+                // Fetched saved recipes from local database
+                if (getDbResult) { dbResult = repository.getAllSavedRecipes() }
                 resolvedQueryState = QueryState.SUCCESS
                 Log.d("SharedViewModel.kt", "Query retrieved successfully")
-                val databaseSizeBefore = repository.getAllSavedRecipes().size
-                Log.d("SharedViewModel.kt", "Saved recipes size before: $databaseSizeBefore")
-                repository.insertSavedRecipe(queryResult.results[1])
-                val databaseSizeAfter = repository.getAllSavedRecipes().size
-                Log.d("SharedViewModel.kt", "Saved recipes size after: $databaseSizeAfter")
             } catch (e: Exception) {
                 resolvedQueryState = QueryState.ERROR
                 Log.e("SharedViewModel.kt", "Query failed: $e")
             }
             withContext(Dispatchers.Main) {
-                _recipes.value = queryResult
+                if (getApiResult) { _recipes.value = apiResult }
+                if (getDbResult) { _savedRecipes.value = dbResult as MutableList<Recipe>? }
                 _queryState.value = resolvedQueryState
                 Log.d("SharedViewModel.kt", "Query state updated to ${_queryState.value}")
             }
         }
     }
 
+    fun isSavedRecipe(recipe: Recipe): Boolean {
+        val id = recipe.recipeApiId
+        return savedRecipes.value!!.any { savedRecipe -> savedRecipe.recipeApiId == id }
+    }
+
     fun clearRecipes() {
         _recipes.value = null
         _queryState.value = QueryState.LOADING
+    }
+
+    fun saveRecipe(recipe: Recipe): Boolean {
+        var insertWasSuccessful = false
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                repository.insertSavedRecipe(recipe)
+                _savedRecipes.value!!.add(recipe)
+                withContext(Dispatchers.Main) {
+                    insertWasSuccessful = true
+                }
+            } catch(e: Exception) {
+                Log.e("SharedViewModel.kt", "Insert failed: $e")
+            }
+        }
+        return insertWasSuccessful
+    }
+
+    fun deleteSavedRecipe(recipe: Recipe): Boolean {
+        var deleteWasSuccessful = false
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                repository.deleteSavedRecipe(recipe)
+                _savedRecipes.value!!.first { savedRecipe ->
+                    savedRecipe.recipeApiId == recipe.recipeApiId
+                }
+                withContext(Dispatchers.Main) {
+                    deleteWasSuccessful = true
+                }
+            } catch(e: Exception) {
+                Log.e("SharedViewModel.kt", "Delete failed: $e")
+            }
+        }
+        return deleteWasSuccessful
     }
 
     fun setSelectedRecipeImagePainter(painter: AsyncImagePainter) {

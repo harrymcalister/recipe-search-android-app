@@ -11,7 +11,6 @@ interface SavedRecipeDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertSavedRecipe(savedRecipe: SavedRecipe)
 
-    @Delete
-    fun deleteSavedRecipe(savedRecipe: SavedRecipe)
-
+    @Query("DELETE FROM recipes WHERE recipe_api_id = :recipeApiId")
+    fun deleteSavedRecipe(recipeApiId: Int)
 }

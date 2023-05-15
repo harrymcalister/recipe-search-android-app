@@ -3,6 +3,7 @@ package com.example.recipesearch.repositories
 import android.content.Context
 import com.example.recipesearch.database.RecipeSearchDatabase
 import com.example.recipesearch.database.savedrecipe.SavedRecipe
+import com.example.recipesearch.database.savedrecipe.toRecipe
 import com.example.recipesearch.model.Recipe
 import com.example.recipesearch.model.RecipeResult
 import com.example.recipesearch.model.toSavedRecipe
@@ -22,16 +23,21 @@ object MainRepositoryImpl: MainRepository {
         return api.retrofitService.getRecipes(query = query)
     }
 
-    // Convert all SavedRecipe to Recipe by removing id
-    override suspend fun getAllSavedRecipes(): List<SavedRecipe> {
-        return database.getSavedRecipeDao().getAllSavedRecipes()
+    // Cast all SavedRecipe to Recipe by removing id
+    override suspend fun getAllSavedRecipes(): List<Recipe> {
+        val savedRecipes = database.getSavedRecipeDao().getAllSavedRecipes()
+        val castRecipes = mutableListOf<Recipe>()
+        for (savedRecipe in savedRecipes) {
+            castRecipes.add(savedRecipe.toRecipe())
+        }
+        return castRecipes
     }
 
     override suspend fun insertSavedRecipe(recipe: Recipe) {
         database.getSavedRecipeDao().insertSavedRecipe(recipe.toSavedRecipe())
     }
 
-    override suspend fun deleteSavedRecipe(savedRecipe: SavedRecipe) {
-        TODO("Not yet implemented")
+    override suspend fun deleteSavedRecipe(recipe: Recipe) {
+        database.getSavedRecipeDao().deleteSavedRecipe(recipeApiId = recipe.recipeApiId)
     }
 }

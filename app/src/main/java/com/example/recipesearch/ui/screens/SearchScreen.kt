@@ -2,6 +2,8 @@ package com.example.recipesearch.ui.screens
 
 import android.content.res.Resources
 import android.util.Log
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -10,14 +12,19 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -51,7 +58,11 @@ fun SearchScreen(
 ) {
     LaunchedEffect(Unit) {
         if (viewModel.recipes.value == null) {
-            viewModel.fetchRecipes(query)
+            viewModel.fetchRecipes(
+                query = query,
+                getApiResult = true,
+                getDbResult = true
+            )
         }
     }
 
@@ -195,10 +206,9 @@ fun RecipesListItem(
                                 .fillMaxWidth(0.85f)
                         )
                     }
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_favourite_outline_24),
-                        contentDescription = "Favourite icon",
-                        modifier = Modifier.size(24.dp)
+                    SaveRecipeIcon(
+                        viewModel = viewModel,
+                        recipe = recipe
                     )
                 }
                 recipe.description?.let {
@@ -208,9 +218,56 @@ fun RecipesListItem(
                         fontSize = 16.sp,
                         fontWeight = FontWeight(300),
                         modifier = Modifier
+                            .padding(all = 0.dp)
                             .fillMaxWidth()
                     )
                 }
+            }
+        }
+    }
+}
+
+@Composable
+fun SaveRecipeIcon(
+    viewModel: SharedViewModel,
+    recipe: Recipe
+) {
+    var selected by remember { mutableStateOf(viewModel.isSavedRecipe(recipe)) }
+
+    val iconModifier = Modifier
+        .size(24.dp)
+
+    IconButton(
+        onClick = {
+            if (selected) {
+                viewModel.deleteSavedRecipe(recipe)
+                selected = false
+            } else {
+                viewModel.saveRecipe(recipe)
+                selected = true
+            }
+            Log.e("SearchScreen.kt", "Favourite icon clicked")
+        },
+        modifier = iconModifier
+    ) {
+        Crossfade(
+            targetState = selected,
+            animationSpec = tween(durationMillis = 300)
+        ) { iconSelected ->
+            if (iconSelected) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_favourite_filled_24),
+                    contentDescription = "Delete saved recipe icon",
+//                    modifier = iconModifier,
+                    tint = Color.Red
+                )
+            } else {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_favourite_outline_24),
+                    contentDescription = "Save recipe icon",
+//                    modifier = iconModifier,
+                    tint = Color.Gray
+                )
             }
         }
     }

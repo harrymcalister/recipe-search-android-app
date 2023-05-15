@@ -8,9 +8,9 @@ interface MainRepository {
 
     suspend fun getRecipes(query: String): RecipeResult
 
-    suspend fun getAllSavedRecipes(): List<SavedRecipe>
+    suspend fun getAllSavedRecipes(): List<Recipe>
 
     suspend fun insertSavedRecipe(recipe: Recipe)
 
-    suspend fun deleteSavedRecipe(recipe: SavedRecipe)
+    suspend fun deleteSavedRecipe(recipe: Recipe)
 }
