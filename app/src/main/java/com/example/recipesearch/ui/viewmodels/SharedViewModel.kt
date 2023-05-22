@@ -2,16 +2,13 @@ package com.example.recipesearch.ui.viewmodels
 
 import android.content.Context
 import android.util.Log
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import coil.compose.AsyncImagePainter
-import com.example.recipesearch.database.savedrecipe.SavedRecipe
 import com.example.recipesearch.model.Recipe
 import com.example.recipesearch.model.RecipeResult
-import com.example.recipesearch.model.toSavedRecipe
 import com.example.recipesearch.repositories.MainRepositoryImpl
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -105,8 +102,10 @@ class SharedViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 repository.deleteSavedRecipe(recipe)
-                _savedRecipes.value!!.first { savedRecipe ->
-                    savedRecipe.recipeApiId == recipe.recipeApiId
+                _savedRecipes.value!!.apply {
+                    this.removeAt(this.indexOfFirst { savedRecipe ->
+                        savedRecipe.recipeApiId == recipe.recipeApiId
+                    })
                 }
                 withContext(Dispatchers.Main) {
                     deleteWasSuccessful = true
