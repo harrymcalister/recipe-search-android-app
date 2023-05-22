@@ -2,7 +2,6 @@ package com.example.recipesearch.repositories
 
 import android.content.Context
 import com.example.recipesearch.database.RecipeSearchDatabase
-import com.example.recipesearch.database.savedrecipe.SavedRecipe
 import com.example.recipesearch.database.savedrecipe.toRecipe
 import com.example.recipesearch.model.Recipe
 import com.example.recipesearch.model.RecipeResult
@@ -20,7 +19,27 @@ object MainRepositoryImpl: MainRepository {
     }
 
     override suspend fun getRecipes(query: String): RecipeResult {
-        return api.retrofitService.getRecipes(query = query)
+        val retrievedRecipes = api.retrofitService.getRecipes(query = query)
+        return filterCompatibleRecipes(recipeApiResult = retrievedRecipes)
+    }
+
+    private fun filterCompatibleRecipes(recipeApiResult: RecipeResult): RecipeResult {
+        val compatibleRecipes = mutableListOf<Recipe>()
+        for (recipe in recipeApiResult.results) {
+            if (recipe.name == null ||
+                recipe.description == null ||
+                recipe.thumbnailUrl == null ||
+                recipe.totalTimeMinutes == null ||
+                recipe.sections == null ||
+                recipe.instructions == null) {
+                continue
+            }
+            compatibleRecipes.add(recipe)
+        }
+        return RecipeResult(
+            count = compatibleRecipes.size,
+            results = compatibleRecipes
+        )
     }
 
     // Cast all SavedRecipe to Recipe by removing id

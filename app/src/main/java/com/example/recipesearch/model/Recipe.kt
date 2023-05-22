@@ -6,12 +6,12 @@ import com.google.gson.annotations.SerializedName
 data class Recipe(
     val renditions: List<Any>,
     @SerializedName("total_time_tier")
-    val totalTimeTier: Any,
+    val totalTimeTier: Any?,
     @SerializedName("seo_title")
     val seoTitle: String,
     @SerializedName("video_id")
     val videoId: Any?,
-    val instructions: List<Instruction>,
+    val instructions: List<Instruction>?,
     @SerializedName("draft_status")
     val draftStatus: String,
     @SerializedName("thumbnail_alt_text")
@@ -21,11 +21,11 @@ data class Recipe(
     @SerializedName("facebook_posts")
     val facebookPosts: List<Any>,
     val brand: Any?,
-    val show: Any,
+    val show: Any?,
     @SerializedName("is_one_top")
     val isOneTop: Boolean,
     @SerializedName("total_time_minutes")
-    val totalTimeMinutes: Int,
+    val totalTimeMinutes: Int?,
     @SerializedName("servings_noun_plural")
     val servingsNounPlural: String,
     @SerializedName("is_shoppable")
@@ -48,7 +48,7 @@ data class Recipe(
     val name: String?,
     @SerializedName("created_at")
     val createdAt: Long,
-    val sections: List<Components>,
+    val sections: List<Components>?,
     val compilations: List<Any>,
     @SerializedName("beauty_url")
     val beautyUrl: Any?,
@@ -70,14 +70,14 @@ data class Recipe(
     val videoAdContent: Any?,
     val language: String,
     @SerializedName("user_ratings")
-    val userRatings: Any,
+    val userRatings: Any?,
     @SerializedName("brand_id")
     val brandId: Any?,
     val tags: List<Any>,
     @SerializedName("canonical_id")
     val canonicalId: String,
     val slug: String,
-    val nutrition: Any,
+    val nutrition: Any?,
     @SerializedName("thumbnail_url")
     val thumbnailUrl: String?,
     val yields: String,

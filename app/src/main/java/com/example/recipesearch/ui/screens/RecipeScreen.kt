@@ -62,7 +62,7 @@ fun RecipeScreen(
 
         RecipeDivider()
 
-        RecipeTime(totalTimeMinutes = selectedRecipe.totalTimeMinutes)
+        RecipeTime(totalTimeMinutes = selectedRecipe.totalTimeMinutes!!)
 
         RecipeDivider()
 
@@ -76,7 +76,7 @@ fun RecipeScreen(
             style = MaterialTheme.typography.titleLarge
         )
 
-        selectedRecipe.instructions.forEach { instruction ->
+        selectedRecipe.instructions!!.forEach { instruction ->
             Text(
                 text = "${instruction.position}) ${instruction.displayText}",
                 style = MaterialTheme.typography.titleMedium

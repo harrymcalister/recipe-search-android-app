@@ -195,33 +195,29 @@ fun RecipesListItem(
                         .padding(bottom = 4.dp)
                         .fillMaxWidth()
                 ) {
-                    recipe.name?.let {
-                        Text(
-                            text = recipe.name,
-                            overflow = TextOverflow.Ellipsis,
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight(600),
-                            modifier = Modifier
-                                .padding(vertical = 0.dp)
-                                .fillMaxWidth(0.85f)
-                        )
-                    }
+                    Text(
+                        text = recipe.name!!,
+                        overflow = TextOverflow.Ellipsis,
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight(600),
+                        modifier = Modifier
+                            .padding(vertical = 0.dp)
+                            .fillMaxWidth(0.85f)
+                    )
                     SaveRecipeIcon(
                         viewModel = viewModel,
                         recipe = recipe
                     )
                 }
-                recipe.description?.let {
-                    Text(
-                        text = it,
-                        overflow = TextOverflow.Ellipsis,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight(300),
-                        modifier = Modifier
-                            .padding(all = 0.dp)
-                            .fillMaxWidth()
-                    )
-                }
+                Text(
+                    text = recipe.description!!,
+                    overflow = TextOverflow.Ellipsis,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight(300),
+                    modifier = Modifier
+                        .padding(all = 0.dp)
+                        .fillMaxWidth()
+                )
             }
         }
     }
