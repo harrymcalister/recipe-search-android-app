@@ -57,7 +57,6 @@ class SharedViewModel(
                 // Fetched saved recipes from local database
                 if (getDbResult) { dbResult = repository.getAllSavedRecipes() }
                 resolvedQueryState = QueryState.SUCCESS
-                Log.d("SharedViewModel.kt", "Query retrieved successfully")
             } catch (e: Exception) {
                 resolvedQueryState = QueryState.ERROR
                 Log.e("SharedViewModel.kt", "Query failed: $e")
@@ -66,7 +65,6 @@ class SharedViewModel(
                 if (getApiResult) { _recipes.value = apiResult }
                 if (getDbResult) { _savedRecipes.value = dbResult as MutableList<Recipe>? }
                 _queryState.value = resolvedQueryState
-                Log.d("SharedViewModel.kt", "Query state updated to ${_queryState.value}")
             }
         }
     }

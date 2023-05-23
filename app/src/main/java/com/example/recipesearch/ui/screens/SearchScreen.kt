@@ -242,13 +242,12 @@ fun SaveRecipeIcon(
                 viewModel.saveRecipe(recipe)
                 selected = true
             }
-            Log.e("SearchScreen.kt", "Favourite icon clicked")
         },
         modifier = iconModifier
     ) {
         Crossfade(
             targetState = selected,
-            animationSpec = tween(durationMillis = 300)
+            animationSpec = tween(durationMillis = 500)
         ) { iconSelected ->
             if (iconSelected) {
                 Icon(

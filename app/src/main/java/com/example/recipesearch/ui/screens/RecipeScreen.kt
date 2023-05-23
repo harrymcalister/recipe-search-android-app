@@ -52,8 +52,6 @@ fun RecipeScreen(
             .verticalScroll(state = rememberScrollState())
             .padding(all = 16.dp)
     ) {
-        RecipeDivider()
-
         RecipeTitle(title = selectedRecipe.name!!)
         
         RecipeImage(viewModel = viewModel)
