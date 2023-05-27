@@ -82,10 +82,12 @@ fun SearchBar(searchQuery: MutableState<String>, onSubmit: () -> Unit) {
             singleLine = true,
             trailingIcon = {
                 Icon(
-                    Icons.Filled.Search,
+                    imageVector = Icons.Filled.Search,
                     contentDescription = "Search Icon",
                     tint = Color.Gray,
-                    modifier = Modifier.padding(end = 8.dp)
+                    modifier = Modifier
+                        .size(36.dp)
+                        .padding(end = 8.dp)
                 )
             }
         )

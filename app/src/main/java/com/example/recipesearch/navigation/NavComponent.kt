@@ -1,29 +1,41 @@
 package com.example.recipesearch.navigation
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.outlined.Email
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.*
 import androidx.navigation.compose.NavHost
@@ -74,27 +86,7 @@ fun NavComponent() {
                 .padding(innerPadding),
             drawerState = burgerMenuState,
             scrimColor = Color.LightGray.copy(alpha = 0.5f),
-            drawerContent = {
-                Row (
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .width(200.dp)
-                        .background(MaterialTheme.colorScheme.background)
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .width(199.dp)
-                            .fillMaxHeight()
-                    ) {
-                    }
-                    Box(
-                        modifier = Modifier
-                            .width(1.dp)
-                            .fillMaxHeight()
-                            .background(Color.Gray)
-                    )
-                }
-            },
+            drawerContent = { BurgerMenu(navController = navController) },
             gesturesEnabled = true,
             content = {
                 Column {
@@ -183,7 +175,10 @@ fun MyTopBar(
     TopAppBar(
         modifier = clearFocusModifier,
         title = {
-            Text(getAppBarTitle(currentRoute))
+            Text(
+                text = getAppBarTitle(currentRoute),
+                color = Color.DarkGray
+            )
         },
         navigationIcon = {
             if (isNotOnHomePage) {
@@ -192,6 +187,7 @@ fun MyTopBar(
                 ) {
                     Icon(
                         imageVector = Icons.Default.ArrowBack,
+                        tint = Color.DarkGray,
                         contentDescription = "Back"
                     )
                 }
@@ -204,12 +200,131 @@ fun MyTopBar(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Menu,
+                        tint = Color.DarkGray,
                         contentDescription = "Burger menu"
                     )
                 }
             }
         }
     )
+}
+
+@Composable
+fun BurgerMenu(navController: NavController) {
+    Row (
+        modifier = Modifier
+            .fillMaxHeight()
+            .width(200.dp)
+            .background(MaterialTheme.colorScheme.background)
+    ) {
+        val menuWidth = 199.dp
+        Column(
+            modifier = Modifier
+                .width(menuWidth)
+                .fillMaxHeight()
+        ) {
+            Spacer(
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .width(menuWidth.times(0.95f))
+                    .height(1.dp)
+                    .background(Color.Gray)
+            )
+            BurgerMenuItem(
+                onClick = { navController.navigate(Route.HomeScreenRoute.route) },
+                icon = Icons.Default.Search,
+                text = "Search"
+            )
+            Spacer(
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .width(menuWidth.times(0.95f))
+                    .height(1.dp)
+                    .background(Color.Gray)
+            )
+            BurgerMenuItem(
+                onClick = {  },
+                icon = Icons.Default.FavoriteBorder,
+                text = "Saved Recipes"
+            )
+            Spacer(
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .width(menuWidth.times(0.95f))
+                    .height(1.dp)
+                    .background(Color.Gray)
+            )
+            BurgerMenuItem(
+                onClick = {  },
+                icon = Icons.Outlined.Settings,
+                text = "Settings"
+            )
+            Spacer(
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .width(menuWidth.times(0.95f))
+                    .height(1.dp)
+                    .background(Color.Gray)
+            )
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            Spacer(
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .width(menuWidth.times(0.95f))
+                    .height(1.dp)
+                    .background(Color.Gray)
+            )
+            BurgerMenuItem(
+                onClick = {  },
+                icon = Icons.Outlined.Email,
+                text = "Give Feedback"
+            )
+        }
+        Box(
+            modifier = Modifier
+                .width(1.dp)
+                .fillMaxHeight()
+                .background(Color.Gray)
+        )
+    }
+}
+
+@Composable
+fun BurgerMenuItem(
+    onClick: () -> Unit,
+    icon: ImageVector,
+    text: String
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(50.dp)
+            .clickable { onClick() }
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                modifier = Modifier.size(30.dp),
+                imageVector = icon,
+                tint = Color.DarkGray,
+                contentDescription = text)
+            Text(
+                modifier = Modifier.padding(horizontal = 8.dp),
+                color = Color.DarkGray,
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight(400),
+                textAlign = TextAlign.Start,
+                fontSize = 20.sp,
+                text = text
+            )
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
