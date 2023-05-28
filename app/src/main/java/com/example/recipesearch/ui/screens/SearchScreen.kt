@@ -98,12 +98,11 @@ fun RecipesList(
         contentPadding = PaddingValues(16.dp),
         modifier = Modifier.fillMaxSize()
     ) {
-        itemsIndexed(recipes) { index, recipe ->
+        itemsIndexed(recipes) { _, recipe ->
             RecipesListItem(
                 viewModel = viewModel,
                 navController = navController,
-                recipesListIndex = index,
-                recipe = recipe
+                recipe = recipe,
             )
         }
     }
@@ -113,14 +112,14 @@ fun RecipesList(
 fun RecipesListItem(
     viewModel: SharedViewModel,
     navController: NavController,
-    recipesListIndex: Int,
     recipe: Recipe
 ) {
     var imagePainter by remember { mutableStateOf<AsyncImagePainter?>(null) }
 
-    val navigateToRecipeScreen: (Int) -> Unit = { recipesIndex ->
+    val navigateToRecipeScreen: () -> Unit = {
         viewModel.setSelectedRecipeImagePainter(imagePainter!!)
-        navController.navigate(Route.RecipeScreenRoute.withArgs(recipesIndex.toString())) {
+        viewModel.setSelectedRecipe(recipe)
+        navController.navigate(Route.RecipeScreenRoute.route) {
             launchSingleTop = true
         }
     }
@@ -132,7 +131,7 @@ fun RecipesListItem(
         ),
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { navigateToRecipeScreen(recipesListIndex) }
+            .clickable { navigateToRecipeScreen() }
     ) {
         Row(
             modifier = Modifier

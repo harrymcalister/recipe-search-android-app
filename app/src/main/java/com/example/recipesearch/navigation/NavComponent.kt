@@ -120,25 +120,24 @@ fun NavComponent() {
                                 }
                             )
                         ) { backStackEntry ->
+                            closeBurgerMenu(
+                                burgerMenuState = burgerMenuState,
+                                scope = coroutineScope
+                            )
                             SearchScreen(
                                 viewModel = sharedViewModel,
                                 navController = navController,
                                 query = backStackEntry.arguments!!.getString("query")!!
                             )
                         }
-                        composable(
-                            route = Route.RecipeScreenRoute.route + "/{recipesIndex}",
-                            arguments = listOf(
-                                navArgument("recipesIndex") {
-                                    type = NavType.IntType
-                                    nullable = false
-                                }
+                        composable(route = Route.RecipeScreenRoute.route) {
+                            closeBurgerMenu(
+                                burgerMenuState = burgerMenuState,
+                                scope = coroutineScope
                             )
-                        ) { backStackEntry ->
                             RecipeScreen(
                                 viewModel = sharedViewModel,
-                                navController = navController,
-                                recipesIndex = backStackEntry.arguments!!.getInt("recipesIndex")
+                                navController = navController
                             )
                         }
                         composable(route = Route.SavedRecipesScreenRoute.route) {

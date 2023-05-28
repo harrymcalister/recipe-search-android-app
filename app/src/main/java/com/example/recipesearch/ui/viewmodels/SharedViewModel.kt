@@ -26,6 +26,9 @@ class SharedViewModel(
     private var _selectedRecipeImagePainter = MutableLiveData<AsyncImagePainter?>(null)
     val selectedRecipeImagePainter: LiveData<AsyncImagePainter?> = _selectedRecipeImagePainter
 
+    private var _selectedRecipe = MutableLiveData<Recipe?>(null)
+    val selectedRecipe: LiveData<Recipe?> = _selectedRecipe
+
     private var _recipes = MutableLiveData<RecipeResult?>(null)
     val recipes: LiveData<RecipeResult?> = _recipes
 
@@ -117,5 +120,9 @@ class SharedViewModel(
 
     fun setSelectedRecipeImagePainter(painter: AsyncImagePainter) {
         _selectedRecipeImagePainter.value = painter
+    }
+
+    fun setSelectedRecipe(recipe: Recipe) {
+        _selectedRecipe.value = recipe
     }
 }
