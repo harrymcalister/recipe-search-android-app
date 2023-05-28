@@ -199,6 +199,7 @@ fun MyTopBar(
                     }
                 ) {
                     Icon(
+                        modifier = Modifier.size(36.dp),
                         imageVector = Icons.Default.Menu,
                         tint = Color.DarkGray,
                         contentDescription = "Burger menu"
