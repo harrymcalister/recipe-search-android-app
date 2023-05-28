@@ -56,7 +56,8 @@ fun SearchScreen(
         SharedViewModel.QueryState.SUCCESS -> {
             RecipesList(
                 viewModel = viewModel,
-                navController = navController
+                navController = navController,
+                useSavedRecipes = false
             )
         }
         else -> {
@@ -84,14 +85,20 @@ fun LoadingScreen() {
 @Composable
 fun RecipesList(
     viewModel: SharedViewModel,
-    navController: NavController
+    navController: NavController,
+    useSavedRecipes: Boolean
 ) {
+    val recipes = when (useSavedRecipes) {
+        true -> viewModel.savedRecipes.value!!.toList()
+        false -> viewModel.recipes.value!!.results
+    }
+
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(12.dp),
         contentPadding = PaddingValues(16.dp),
         modifier = Modifier.fillMaxSize()
     ) {
-        itemsIndexed(viewModel.recipes.value!!.results) { index, recipe ->
+        itemsIndexed(recipes) { index, recipe ->
             RecipesListItem(
                 viewModel = viewModel,
                 navController = navController,

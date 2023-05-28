@@ -45,6 +45,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.recipesearch.repositories.MainRepositoryImpl
 import com.example.recipesearch.ui.screens.HomeScreen
 import com.example.recipesearch.ui.screens.RecipeScreen
+import com.example.recipesearch.ui.screens.SavedRecipesScreen
 import com.example.recipesearch.ui.screens.SearchScreen
 import com.example.recipesearch.ui.viewmodels.SharedViewModel
 import com.example.recipesearch.ui.viewmodels.SharedViewModelFactory
@@ -140,6 +141,16 @@ fun NavComponent() {
                                 recipesIndex = backStackEntry.arguments!!.getInt("recipesIndex")
                             )
                         }
+                        composable(route = Route.SavedRecipesScreenRoute.route) {
+                            closeBurgerMenu(
+                                burgerMenuState = burgerMenuState,
+                                scope = coroutineScope
+                            )
+                            SavedRecipesScreen(
+                                viewModel = sharedViewModel,
+                                navController = navController
+                            )
+                        }
                     }
                 }
             }
@@ -149,9 +160,11 @@ fun NavComponent() {
 
 private fun getAppBarTitle(currentRoute: String?): String {
     val resId = when (currentRoute?.takeWhile { it.isLetter() }) {
-        null, Route.HomeScreenRoute.route -> Route.HomeScreenRoute.title
+        Route.SearchScreenRoute.route -> Route.SearchScreenRoute.title
         Route.RecipeScreenRoute.route -> Route.RecipeScreenRoute.title
-        else -> Route.SearchScreenRoute.title
+        Route.SavedRecipesScreenRoute.route -> Route.SavedRecipesScreenRoute.title
+        // currentRoute may also be null on home when first loading the app
+        else -> Route.HomeScreenRoute.title
     }
     return resId
 }
@@ -168,8 +181,10 @@ fun MyTopBar(
     }
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
-    val isNotOnHomePage = when (currentRoute) {
-        null, Route.HomeScreenRoute.route -> false
+    val isNotOnBurgerPage = when (currentRoute) {
+        null,
+        Route.HomeScreenRoute.route,
+        Route.SavedRecipesScreenRoute.route -> false
         else -> true
     }
     TopAppBar(
@@ -181,7 +196,7 @@ fun MyTopBar(
             )
         },
         navigationIcon = {
-            if (isNotOnHomePage) {
+            if (isNotOnBurgerPage) {
                 IconButton(
                     onClick = { navController.popBackStack() }
                 ) {
@@ -244,7 +259,7 @@ fun BurgerMenu(navController: NavController) {
                     .background(Color.Gray)
             )
             BurgerMenuItem(
-                onClick = {  },
+                onClick = { navController.navigate(Route.SavedRecipesScreenRoute.route) },
                 icon = Icons.Default.FavoriteBorder,
                 text = "Saved Recipes"
             )

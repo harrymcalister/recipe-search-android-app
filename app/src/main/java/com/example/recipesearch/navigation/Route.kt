@@ -7,7 +7,7 @@ import com.example.recipesearch.R
 sealed class Route(val route: String, val title: String) {
     object HomeScreenRoute : Route(
         route = "home",
-        title = ""
+        title = "Search"
     )
     object SearchScreenRoute : Route(
         route = "search",
@@ -16,6 +16,10 @@ sealed class Route(val route: String, val title: String) {
     object RecipeScreenRoute : Route(
         route = "recipe",
         title = "Recipe Details"
+    )
+    object SavedRecipesScreenRoute : Route(
+        route = "saved",
+        title = "Saved Recipes"
     )
 
     fun withArgs(vararg args: String): String {
