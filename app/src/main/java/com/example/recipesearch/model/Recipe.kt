@@ -59,9 +59,9 @@ data class Recipe(
     @SerializedName("seo_path")
     val seoPath: Any?,
     @SerializedName("prep_time_minutes")
-    val prepTimeMinutes: Int,
+    val prepTimeMinutes: Int?,
     @SerializedName("cook_time_minutes")
-    val cookTimeMinutes: Int,
+    val cookTimeMinutes: Int?,
     val description: String?,
     @SerializedName("inspired_by_url")
     val inspiredByUrl: Any?,

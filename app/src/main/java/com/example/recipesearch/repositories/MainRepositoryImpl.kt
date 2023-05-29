@@ -27,9 +27,7 @@ object MainRepositoryImpl: MainRepository {
         val compatibleRecipes = mutableListOf<Recipe>()
         for (recipe in recipeApiResult.results) {
             if (recipe.name == null ||
-                recipe.description == null ||
                 recipe.thumbnailUrl == null ||
-                recipe.totalTimeMinutes == null ||
                 recipe.sections == null ||
                 recipe.instructions == null) {
                 continue

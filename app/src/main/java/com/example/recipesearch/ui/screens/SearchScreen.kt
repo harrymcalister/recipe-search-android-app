@@ -196,15 +196,17 @@ fun RecipesListItem(
                         recipe = recipe
                     )
                 }
-                Text(
-                    text = recipe.description!!,
-                    overflow = TextOverflow.Ellipsis,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight(300),
-                    modifier = Modifier
-                        .padding(all = 0.dp)
-                        .fillMaxWidth()
-                )
+                recipe.description?.let {
+                    Text(
+                        text = it,
+                        overflow = TextOverflow.Ellipsis,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight(300),
+                        modifier = Modifier
+                            .padding(all = 0.dp)
+                            .fillMaxWidth()
+                    )
+                }
             }
         }
     }

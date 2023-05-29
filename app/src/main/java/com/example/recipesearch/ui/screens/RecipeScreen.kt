@@ -40,10 +40,9 @@ import com.example.recipesearch.model.*
 @Composable
 fun RecipeScreen(
     viewModel: SharedViewModel,
-    navController: NavController,
-    recipesIndex: Int
+    navController: NavController
 ) {
-    val selectedRecipe = viewModel.recipes.value!!.results[recipesIndex]
+    val selectedRecipe = viewModel.selectedRecipe.value!!
 
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -56,13 +55,24 @@ fun RecipeScreen(
         
         RecipeImage(viewModel = viewModel)
 
-        RecipeDescription(description = selectedRecipe.description!!)
+        selectedRecipe.description?.let {
+            RecipeDescription(description = it)
+        }
 
         RecipeDivider()
 
-        RecipeTime(totalTimeMinutes = selectedRecipe.totalTimeMinutes!!)
+        val recipeHasTimeData = selectedRecipe.totalTimeMinutes != null &&
+                selectedRecipe.prepTimeMinutes != null &&
+                selectedRecipe.cookTimeMinutes != null
+        if (recipeHasTimeData) {
+            RecipeTime(
+                totalTimeMinutes = selectedRecipe.totalTimeMinutes!!,
+                prepTimeMinutes = selectedRecipe.prepTimeMinutes!!,
+                cookTimeMinutes = selectedRecipe.cookTimeMinutes!!
+            )
 
-        RecipeDivider()
+            RecipeDivider()
+        }
 
         RecipeIngredients(
             ingredients = selectedRecipe.sections[0].ingredients,
@@ -153,8 +163,25 @@ fun RecipeDescription(description: String) {
     )
 }
 
+fun parseTimeInMinutes(timeMins: Int): String {
+    val hours = timeMins / 60
+    val mins = timeMins % 60
+    val timeString = if (hours == 0) {
+        "$mins mins"
+    } else if (hours == 1) {
+        "$hours hr $mins mins"
+    } else {
+        "$hours hrs $mins mins"
+    }
+    return timeString
+}
+
 @Composable
-fun RecipeTime(totalTimeMinutes: Int) {
+fun RecipeTime(
+    totalTimeMinutes: Int,
+    prepTimeMinutes: Int,
+    cookTimeMinutes: Int
+) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -164,25 +191,45 @@ fun RecipeTime(totalTimeMinutes: Int) {
             contentDescription = "Timer icon",
             modifier = Modifier.height(24.dp)
         )
-        val hours = totalTimeMinutes / 60
-        val mins = totalTimeMinutes % 60
-        val timeString = if (hours == 0) {
-            "$mins minutes"
-        } else if (hours == 1) {
-            "$hours hour and $mins minutes"
-        } else {
-            "$hours hours and $mins minutes"
+
+        val totalTime = parseTimeInMinutes(totalTimeMinutes)
+        val prepTime = parseTimeInMinutes(prepTimeMinutes)
+        val cookTime = parseTimeInMinutes(cookTimeMinutes)
+
+        Column {
+            Text(
+                text = "Total time - $totalTime",
+                color = Color.DarkGray,
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight(300),
+                textAlign = TextAlign.Start,
+                fontSize = 24.sp,
+                lineHeight = 24.sp,
+                maxLines = 1,
+                modifier = Modifier.fillMaxWidth()
+            )
+            Text(
+                text = "Prep time - $prepTime",
+                color = Color.DarkGray,
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight(300),
+                textAlign = TextAlign.Start,
+                fontSize = 24.sp,
+                lineHeight = 24.sp,
+                maxLines = 1,
+                modifier = Modifier.fillMaxWidth()
+            )
+            Text(
+                text = "Cook time - $cookTime",
+                color = Color.DarkGray,
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight(300),
+                textAlign = TextAlign.Start,
+                fontSize = 24.sp,
+                lineHeight = 24.sp,
+                maxLines = 1,
+                modifier = Modifier.fillMaxWidth()
+            )
         }
-        Text(
-            text = timeString,
-            color = Color.DarkGray,
-            style = MaterialTheme.typography.bodyMedium,
-            fontWeight = FontWeight(300),
-            textAlign = TextAlign.Start,
-            fontSize = 24.sp,
-            lineHeight = 24.sp,
-            maxLines = 1,
-            modifier = Modifier.fillMaxWidth()
-        )
     }
 }
