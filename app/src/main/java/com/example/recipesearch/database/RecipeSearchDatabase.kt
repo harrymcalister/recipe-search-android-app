@@ -7,10 +7,13 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.recipesearch.database.savedrecipe.SavedRecipe
 import com.example.recipesearch.database.savedrecipe.SavedRecipeDao
+import com.example.recipesearch.database.setting.Setting
+import com.example.recipesearch.database.setting.SettingDao
 
 @Database(
     entities = [
         SavedRecipe::class,
+        Setting::class
     ],
     version = 1
 )
@@ -18,6 +21,7 @@ import com.example.recipesearch.database.savedrecipe.SavedRecipeDao
 abstract class RecipeSearchDatabase : RoomDatabase() {
 
     abstract fun getSavedRecipeDao(): SavedRecipeDao
+    abstract fun getSettingDao(): SettingDao
 
     companion object {
         @Volatile

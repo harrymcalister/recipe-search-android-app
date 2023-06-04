@@ -21,6 +21,10 @@ sealed class Route(val route: String, val title: String) {
         route = "saved",
         title = "Saved Recipes"
     )
+    object SettingsScreenRoute : Route(
+        route = "settings",
+        title = "Settings"
+    )
 
     fun withArgs(vararg args: String): String {
         return buildString {

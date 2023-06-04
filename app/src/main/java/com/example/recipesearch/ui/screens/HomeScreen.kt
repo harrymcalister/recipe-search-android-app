@@ -8,6 +8,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -26,8 +27,33 @@ fun HomeScreen(
 ) {
     LaunchedEffect(Unit) {
         viewModel.clearRecipes()
+        viewModel.initialiseSettings()
     }
 
+    val queryState by viewModel.queryState.observeAsState()
+
+    when (queryState) {
+        SharedViewModel.QueryState.LOADING -> {
+            LoadingScreen()
+        }
+        SharedViewModel.QueryState.SUCCESS -> {
+            HomeScreenContent(
+                viewModel = viewModel,
+                navController = navController
+            )
+        }
+        else -> {
+            Text(text = "There was an error with retrieving your app settings. " +
+                    "Please report this to the developer.")
+        }
+    }
+}
+
+@Composable
+fun HomeScreenContent(
+    viewModel: SharedViewModel,
+    navController: NavController
+) {
     val searchQuery = remember { mutableStateOf("") }
     val focusManager = LocalFocusManager.current
 
@@ -90,6 +116,22 @@ fun SearchBar(searchQuery: MutableState<String>, onSubmit: () -> Unit) {
                         .padding(end = 8.dp)
                 )
             }
+        )
+    }
+}
+
+@Composable
+fun LoadingScreen() {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier.fillMaxSize()
+    ) {
+        CircularProgressIndicator(
+            color = Color.Gray,
+            strokeWidth = 4.dp,
+            modifier = Modifier
+                .size(100.dp)
+                .padding(8.dp)
         )
     }
 }

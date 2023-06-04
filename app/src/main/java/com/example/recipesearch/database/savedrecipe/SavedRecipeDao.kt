@@ -1,7 +1,6 @@
 package com.example.recipesearch.database.savedrecipe
 
 import androidx.room.*
-import com.example.recipesearch.model.Recipe
 
 @Dao
 interface SavedRecipeDao {

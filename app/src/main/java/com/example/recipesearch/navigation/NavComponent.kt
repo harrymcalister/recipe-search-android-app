@@ -47,6 +47,7 @@ import com.example.recipesearch.ui.screens.HomeScreen
 import com.example.recipesearch.ui.screens.RecipeScreen
 import com.example.recipesearch.ui.screens.SavedRecipesScreen
 import com.example.recipesearch.ui.screens.SearchScreen
+import com.example.recipesearch.ui.screens.SettingsScreen
 import com.example.recipesearch.ui.viewmodels.SharedViewModel
 import com.example.recipesearch.ui.viewmodels.SharedViewModelFactory
 import kotlinx.coroutines.CoroutineScope
@@ -124,6 +125,7 @@ fun NavComponent() {
                                 burgerMenuState = burgerMenuState,
                                 scope = coroutineScope
                             )
+                            sharedViewModel.setQueryState(SharedViewModel.QueryState.LOADING)
                             SearchScreen(
                                 viewModel = sharedViewModel,
                                 navController = navController,
@@ -150,6 +152,16 @@ fun NavComponent() {
                                 navController = navController
                             )
                         }
+                        composable(route = Route.SettingsScreenRoute.route) {
+                            closeBurgerMenu(
+                                burgerMenuState = burgerMenuState,
+                                scope = coroutineScope
+                            )
+                            SettingsScreen(
+                                viewModel = sharedViewModel,
+                                navController = navController
+                            )
+                        }
                     }
                 }
             }
@@ -162,6 +174,7 @@ private fun getAppBarTitle(currentRoute: String?): String {
         Route.SearchScreenRoute.route -> Route.SearchScreenRoute.title
         Route.RecipeScreenRoute.route -> Route.RecipeScreenRoute.title
         Route.SavedRecipesScreenRoute.route -> Route.SavedRecipesScreenRoute.title
+        Route.SettingsScreenRoute.route -> Route.SettingsScreenRoute.title
         // currentRoute may also be null on home when first loading the app
         else -> Route.HomeScreenRoute.title
     }
@@ -183,7 +196,8 @@ fun MyTopBar(
     val isNotOnBurgerPage = when (currentRoute) {
         null,
         Route.HomeScreenRoute.route,
-        Route.SavedRecipesScreenRoute.route -> false
+        Route.SavedRecipesScreenRoute.route,
+        Route.SettingsScreenRoute.route -> false
         else -> true
     }
     TopAppBar(
@@ -226,13 +240,13 @@ fun MyTopBar(
 
 @Composable
 fun BurgerMenu(navController: NavController) {
+    val menuWidth = 199.dp
     Row (
         modifier = Modifier
             .fillMaxHeight()
-            .width(200.dp)
+            .width(menuWidth + 1.dp)
             .background(MaterialTheme.colorScheme.background)
     ) {
-        val menuWidth = 199.dp
         Column(
             modifier = Modifier
                 .width(menuWidth)
@@ -270,7 +284,7 @@ fun BurgerMenu(navController: NavController) {
                     .background(Color.Gray)
             )
             BurgerMenuItem(
-                onClick = {  },
+                onClick = { navController.navigate(Route.SettingsScreenRoute.route) },
                 icon = Icons.Outlined.Settings,
                 text = "Settings"
             )

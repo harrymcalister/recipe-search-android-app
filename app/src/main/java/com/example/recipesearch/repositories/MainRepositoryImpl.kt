@@ -3,6 +3,7 @@ package com.example.recipesearch.repositories
 import android.content.Context
 import com.example.recipesearch.database.RecipeSearchDatabase
 import com.example.recipesearch.database.savedrecipe.toRecipe
+import com.example.recipesearch.database.setting.Setting
 import com.example.recipesearch.model.Recipe
 import com.example.recipesearch.model.RecipeResult
 import com.example.recipesearch.model.toSavedRecipe
@@ -56,5 +57,16 @@ object MainRepositoryImpl: MainRepository {
 
     override suspend fun deleteSavedRecipe(recipe: Recipe) {
         database.getSavedRecipeDao().deleteSavedRecipe(recipeApiId = recipe.recipeApiId)
+    }
+
+    override suspend fun getAllSettings(): List<Setting> {
+        return database.getSettingDao().getAllSettings()
+    }
+
+    override suspend fun updateSetting(settingKey: String, newSettingValue: String) {
+        database.getSettingDao().updateSetting(
+            key = settingKey,
+            newValue = newSettingValue
+        )
     }
 }

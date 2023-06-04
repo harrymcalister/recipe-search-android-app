@@ -67,22 +67,6 @@ fun SearchScreen(
 }
 
 @Composable
-fun LoadingScreen() {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier.fillMaxSize()
-    ) {
-        CircularProgressIndicator(
-            color = Color.Gray,
-            strokeWidth = 4.dp,
-            modifier = Modifier
-                .size(100.dp)
-                .padding(8.dp)
-        )
-    }
-}
-
-@Composable
 fun RecipesList(
     viewModel: SharedViewModel,
     navController: NavController,
