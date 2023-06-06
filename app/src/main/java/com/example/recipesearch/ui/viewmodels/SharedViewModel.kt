@@ -2,7 +2,6 @@ package com.example.recipesearch.ui.viewmodels
 
 import android.content.Context
 import android.util.Log
-import androidx.compose.ui.text.font.FontVariation
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -43,6 +42,24 @@ class SharedViewModel(
     private var _settings = MutableLiveData<MutableList<Setting>>(mutableListOf())
     val settings: LiveData<MutableList<Setting>> = _settings
 
+//    private val DEFAULT_SETTINGS = listOf(
+//        Setting(
+//            id = 0,
+//            settingKey = "results_per_page",
+//            settingValue = "10",
+//        ),
+//        Setting(
+//            id = 1,
+//            settingKey = "max_results",
+//            settingValue = "50",
+//        ),
+//        Setting(
+//            id = 2,
+//            settingKey = "units",
+//            settingValue = "Metric",
+//        )
+//    )
+
     enum class QueryState {
         LOADING,
         SUCCESS,
@@ -75,8 +92,33 @@ class SharedViewModel(
         }
     }
 
-    fun updateSettings() {
+    fun getSettingByKey(settingKey: String): Setting {
+        val settingIndex = _settings.value!!.indexOfFirst { setting ->
+            setting.settingKey == settingKey
+        }
 
+        return _settings.value!![settingIndex]
+    }
+
+    fun updateSetting(settingKey: String, newSettingValue: String): Boolean {
+        var updateWasSuccessful = false
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                repository.updateSetting(
+                    settingKey = settingKey,
+                    newSettingValue = newSettingValue
+                )
+
+                getSettingByKey(settingKey).settingValue = newSettingValue
+
+                withContext(Dispatchers.Main) {
+                    updateWasSuccessful = true
+                }
+            } catch(e: Exception) {
+                Log.e("SharedViewModel.kt", "Update failed: $e")
+            }
+        }
+        return updateWasSuccessful
     }
 
     fun fetchRecipes(

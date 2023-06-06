@@ -64,4 +64,4 @@ INSERT INTO settings (setting_key, setting_value)
 VALUES 
     ('results_per_page', '10'),
     ('max_results', '50'),
-    ('units', 'metric');
+    ('units', 'Metric');

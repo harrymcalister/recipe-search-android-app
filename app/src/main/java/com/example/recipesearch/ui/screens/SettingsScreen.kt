@@ -18,25 +18,20 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -57,10 +52,13 @@ fun SettingsScreen(
         verticalArrangement = Arrangement.spacedBy(32.dp)
     ) {
         item {
-            Row {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
                 Column(
                     modifier = Modifier
-                        .fillMaxWidth(0.75f)
+                        .width(230.dp)
                         .padding(end = 16.dp)
                 ) {
                     Text(
@@ -75,14 +73,21 @@ fun SettingsScreen(
                         style = MaterialTheme.typography.bodyLarge
                     )
                 }
-                DropdownSetting()
+                DropdownSetting(
+                    viewModel = viewModel,
+                    settingKey = "results_per_page",
+                    options = listOf("5", "10", "20", "50", "All")
+                )
             }
         }
         item {
-            Row {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
                 Column(
                     modifier = Modifier
-                        .fillMaxWidth(0.75f)
+                        .width(230.dp)
                         .padding(end = 16.dp)
                 ) {
                     Text(
@@ -97,14 +102,21 @@ fun SettingsScreen(
                         style = MaterialTheme.typography.bodyLarge
                     )
                 }
-                DropdownSetting()
+                DropdownSetting(
+                    viewModel = viewModel,
+                    settingKey = "max_results",
+                    options = listOf("5", "10", "20", "50", "All")
+                )
             }
         }
         item {
-            Row {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
                 Column(
                     modifier = Modifier
-                        .fillMaxWidth(0.75f)
+                        .width(230.dp)
                         .padding(end = 16.dp)
                 ) {
                     Text(
@@ -119,7 +131,13 @@ fun SettingsScreen(
                         style = MaterialTheme.typography.bodyLarge
                     )
                 }
-                DropdownSetting()
+                DropdownSetting(
+                    viewModel = viewModel,
+                    modifier = Modifier
+                        .width(100.dp),
+                    settingKey = "units",
+                    options = listOf("Metric", "Imperial")
+                )
             }
         }
 //        item {
@@ -141,10 +159,24 @@ fun SettingsScreen(
 }
 
 @Composable
-fun DropdownSetting() {
+fun DropdownSetting(
+    viewModel: SharedViewModel,
+    modifier: Modifier = Modifier,
+    settingKey: String,
+    options: List<String>
+) {
     var expanded by remember { mutableStateOf(false) }
-    var selectedIndex by remember { mutableStateOf(0) }
-    val items = listOf("5", "10", "20", "50", "All")
+    var selectedSetting by remember { mutableStateOf(
+        viewModel.getSettingByKey(settingKey).settingValue
+    ) }
+
+    fun onSettingChanged(option: String) {
+        viewModel.updateSetting(
+            settingKey = settingKey,
+            newSettingValue = option
+        )
+        selectedSetting = option
+    }
 
     Box(
         modifier = Modifier
@@ -154,20 +186,29 @@ fun DropdownSetting() {
             .clickable { expanded = true }
     ) {
         Row(
-            modifier = Modifier
+            modifier = modifier
                 .width(60.dp)
                 .padding(all = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = items[selectedIndex]
+                text = selectedSetting
             )
+
+            val iconModifier = if (expanded) {
+                Modifier.scale(
+                    scaleX = 1f,
+                    scaleY = -1f
+                )
+            } else {
+                Modifier
+            }
             Icon(
                 imageVector = Icons.Filled.ArrowDropDown,
                 contentDescription = "Drop down menu",
                 tint = Color.Black,
-                modifier = Modifier
+                modifier = iconModifier
                     .size(24.dp)
                     .padding(start = 8.dp)
             )
@@ -176,10 +217,12 @@ fun DropdownSetting() {
             expanded = expanded,
             onDismissRequest = { expanded = false },
         ) {
-            items.forEachIndexed { index, option ->
+            options.forEach { option ->
                 DropdownMenuItem(
                     onClick = {
-                        selectedIndex = index
+                        onSettingChanged(
+                            option = option
+                        )
                         expanded = false
                     },
                     text = {

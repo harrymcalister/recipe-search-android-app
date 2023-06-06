@@ -77,16 +77,28 @@ fun RecipesList(
         false -> viewModel.recipes.value!!.results
     }
 
-    LazyColumn(
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-        contentPadding = PaddingValues(16.dp),
-        modifier = Modifier.fillMaxSize()
-    ) {
-        itemsIndexed(recipes) { _, recipe ->
-            RecipesListItem(
-                viewModel = viewModel,
-                navController = navController,
-                recipe = recipe,
+    if (recipes.size > 0) {
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            contentPadding = PaddingValues(16.dp),
+            modifier = Modifier.fillMaxSize()
+        ) {
+            itemsIndexed(recipes) { _, recipe ->
+                RecipesListItem(
+                    viewModel = viewModel,
+                    navController = navController,
+                    recipe = recipe,
+                )
+            }
+        }
+    } else {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Text(
+                text = "No recipes found",
+                style = MaterialTheme.typography.titleLarge
             )
         }
     }

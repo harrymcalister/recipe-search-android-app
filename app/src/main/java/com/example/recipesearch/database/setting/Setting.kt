@@ -8,5 +8,5 @@ import androidx.room.PrimaryKey
 data class Setting(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     @ColumnInfo(name = "setting_key") val settingKey: String,
-    @ColumnInfo(name = "setting_value") val settingValue: String
+    @ColumnInfo(name = "setting_value") var settingValue: String
 )
