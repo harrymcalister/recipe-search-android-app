@@ -33,6 +33,9 @@ class SharedViewModel(
     private var _recipes = MutableLiveData<RecipeResult?>(null)
     val recipes: LiveData<RecipeResult?> = _recipes
 
+    private var _currentPage = MutableLiveData<Int>(0)
+    val currentPage: LiveData<Int> = _currentPage
+
     private var _queryState = MutableLiveData(QueryState.LOADING)
     val queryState: LiveData<QueryState> = _queryState
 
@@ -64,6 +67,15 @@ class SharedViewModel(
         LOADING,
         SUCCESS,
         ERROR
+    }
+
+    fun initialiseSavedRecipes() {
+        if (savedRecipes.value!!.size == 0) {
+            fetchRecipes(
+                getApiResult = false,
+                getDbResult = true
+            )
+        }
     }
 
     fun initialiseSettings() {
@@ -123,6 +135,7 @@ class SharedViewModel(
 
     fun fetchRecipes(
         query: String = "",
+        pageNumber: Int = 0,
         getApiResult: Boolean,
         getDbResult: Boolean
     ) {
@@ -133,7 +146,10 @@ class SharedViewModel(
             var resolvedQueryState: QueryState
             try {
                 // Fetch searched recipes from API
-                if (getApiResult) { apiResult = repository.getRecipes(query) }
+                if (getApiResult) { apiResult = repository.getRecipes(
+                    query = query,
+                    pageNumber = pageNumber
+                ) }
                 // Fetched saved recipes from local database
                 if (getDbResult) { dbResult = repository.getAllSavedRecipes() }
                 resolvedQueryState = QueryState.SUCCESS
@@ -156,6 +172,7 @@ class SharedViewModel(
 
     fun clearRecipes() {
         _recipes.value = null
+        _currentPage.value = 0
         _queryState.value = QueryState.SUCCESS
     }
 

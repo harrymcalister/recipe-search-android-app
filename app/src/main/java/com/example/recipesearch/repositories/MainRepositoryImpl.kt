@@ -19,8 +19,14 @@ object MainRepositoryImpl: MainRepository {
         database = RecipeSearchDatabase.getDatabase(context)
     }
 
-    override suspend fun getRecipes(query: String): RecipeResult {
-        val retrievedRecipes = api.retrofitService.getRecipes(query = query)
+    override suspend fun getRecipes(
+        query: String,
+        pageNumber: Int
+    ): RecipeResult {
+        val retrievedRecipes = api.retrofitService.getRecipes(
+            query = query,
+            from = pageNumber
+        )
         return filterCompatibleRecipes(recipeApiResult = retrievedRecipes)
     }
 
@@ -36,7 +42,7 @@ object MainRepositoryImpl: MainRepository {
             compatibleRecipes.add(recipe)
         }
         return RecipeResult(
-            count = compatibleRecipes.size,
+            count = recipeApiResult.count,
             results = compatibleRecipes
         )
     }

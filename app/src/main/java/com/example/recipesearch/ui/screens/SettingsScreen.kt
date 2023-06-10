@@ -76,7 +76,7 @@ fun SettingsScreen(
                 DropdownSetting(
                     viewModel = viewModel,
                     settingKey = "results_per_page",
-                    options = listOf("5", "10", "20", "50", "All")
+                    options = listOf("5", "10", "20", "40")
                 )
             }
         }
@@ -105,7 +105,7 @@ fun SettingsScreen(
                 DropdownSetting(
                     viewModel = viewModel,
                     settingKey = "max_results",
-                    options = listOf("5", "10", "20", "50", "All")
+                    options = listOf("5", "10", "20", "40")
                 )
             }
         }

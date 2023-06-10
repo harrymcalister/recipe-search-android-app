@@ -26,7 +26,7 @@ interface RecipeApiService {
     @GET("/recipes")
     suspend fun getRecipes(
         @Query("from") from: Int = 0,
-        @Query("size") size: Int = 10,
+        @Query("size") size: Int = 40,
         @Query("search") query: String
     ): RecipeResult
 }

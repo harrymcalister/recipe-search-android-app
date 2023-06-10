@@ -7,7 +7,7 @@ import com.example.recipesearch.model.RecipeResult
 
 interface MainRepository {
 
-    suspend fun getRecipes(query: String): RecipeResult
+    suspend fun getRecipes(query: String, pageNumber: Int): RecipeResult
 
     suspend fun getAllSavedRecipes(): List<Recipe>
 

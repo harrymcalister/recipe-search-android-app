@@ -28,6 +28,7 @@ fun HomeScreen(
     LaunchedEffect(Unit) {
         viewModel.clearRecipes()
         viewModel.initialiseSettings()
+        viewModel.initialiseSavedRecipes()
     }
 
     val queryState by viewModel.queryState.observeAsState()

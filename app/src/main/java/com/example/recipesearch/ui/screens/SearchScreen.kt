@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -38,6 +39,8 @@ fun SearchScreen(
     query: String
 ) {
     LaunchedEffect(Unit) {
+        // 'recipes' variable should always be reset when returning to home, so if it is null a new
+        // search has been performed
         if (viewModel.recipes.value == null) {
             viewModel.fetchRecipes(
                 query = query,
@@ -54,7 +57,8 @@ fun SearchScreen(
             LoadingScreen()
         }
         SharedViewModel.QueryState.SUCCESS -> {
-            RecipesList(
+            RecipeList(
+                query = query,
                 viewModel = viewModel,
                 navController = navController,
                 useSavedRecipes = false
@@ -67,7 +71,8 @@ fun SearchScreen(
 }
 
 @Composable
-fun RecipesList(
+fun RecipeList(
+    query: String = "",
     viewModel: SharedViewModel,
     navController: NavController,
     useSavedRecipes: Boolean
@@ -76,6 +81,9 @@ fun RecipesList(
         true -> viewModel.savedRecipes.value!!.toList()
         false -> viewModel.recipes.value!!.results
     }
+    val recipesPerPage = remember {
+        viewModel.getSettingByKey("results_per_page").settingValue.toInt()
+    }
 
     if (recipes.size > 0) {
         LazyColumn(
@@ -83,12 +91,34 @@ fun RecipesList(
             contentPadding = PaddingValues(16.dp),
             modifier = Modifier.fillMaxSize()
         ) {
+            item {
+                RecipeResultCount(totalRecipesFound = viewModel.recipes.value!!.count)
+            }
             itemsIndexed(recipes) { _, recipe ->
                 RecipesListItem(
                     viewModel = viewModel,
                     navController = navController,
                     recipe = recipe,
                 )
+            }
+            item {
+                if (!useSavedRecipes) {
+                    RecipePageSelector(
+                        currentPage = viewModel.currentPage.value!!,
+                        totalRecipesFound = viewModel.recipes.value!!.count,
+                        recipesPerPage = recipesPerPage,
+                        navigateToPage = { pageNumber ->
+                            viewModel.fetchRecipes(
+                                query = query,
+                                pageNumber = pageNumber,
+                                getApiResult = true,
+                                getDbResult = true
+                            )
+                        }
+                    )
+                } else {
+                    //RecipePageSelector for SavedRecipesScreen
+                }
             }
         }
     } else {
@@ -100,6 +130,53 @@ fun RecipesList(
                 text = "No recipes found",
                 style = MaterialTheme.typography.titleLarge
             )
+        }
+    }
+}
+
+@Composable
+fun RecipeResultCount(totalRecipesFound: Int) {
+    Text(
+        text = "$totalRecipesFound results found",
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(68.dp),
+        textAlign = TextAlign.Center
+    )
+}
+
+@Composable
+fun RecipePageSelector(
+    currentPage: Int,
+    totalRecipesFound: Int,
+    recipesPerPage: Int,
+    navigateToPage: (Int) -> Unit
+) {
+    val pageRatio = totalRecipesFound / recipesPerPage
+    val pageCount = if (totalRecipesFound % recipesPerPage == 0) {
+        pageRatio
+    } else {
+        pageRatio + 1
+    }
+    LazyRow(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(68.dp),
+        contentPadding = PaddingValues(all = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        items(pageCount) { index ->
+            Button(
+                onClick = { navigateToPage(index) },
+                modifier = Modifier.size(36.dp),
+                enabled = currentPage != index
+            ) {
+                Text(
+                    text = "${index + 1}",
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center
+                )
+            }
         }
     }
 }
