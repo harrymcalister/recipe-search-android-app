@@ -231,8 +231,91 @@ fun getCorrectMeasurementAndPlurality(
     measurementSystem: String
 ): String {
 //    val ingredientMeasurements = ingredient.measurements
-    var chosenMeasurement: Measurement?
-    chosenMeasurement = if (ingredient.measurements.size == 1) {
+    val correctMeasurement: Measurement = getCorrectMeasurement(
+        ingredient = ingredient,
+        measurementSystem = measurementSystem
+    ) ?: return ingredient.ingredientName.displayPlural.replaceFirstChar { char ->
+            char.uppercase()
+    }
+
+    val (unitIsPlural, nameIsPlural) = getCorrectPlurality(correctMeasurement)
+    val nameString = if (nameIsPlural) {
+        ingredient.ingredientName.displayPlural
+    } else {
+        ingredient.ingredientName.displaySingular
+    }
+    val unitString = if (unitIsPlural) {
+        correctMeasurement.unit.displayPlural
+    } else {
+        correctMeasurement.unit.displaySingular
+    }
+    val quantityString = correctMeasurement.quantity
+
+    return "$quantityString $unitString $nameString"
+
+
+//    if (chosenMeasurement == null)
+//    if (chosenMeasurement.unit.system == "none") {}
+//    val (unitIsPlural, nameIsPlural) = getCorrectPlurality(chosenMeasurement)
+//    val unitString =
+//    val nameString = if (chosenMeasurement == null) {
+//        ingredient.ingredientName.displaySingular.replaceFirstChar { char ->
+//            char.uppercase()
+//        }
+//    } else if (chosenMeasurement.quantity == "1") {
+//        ingredient.ingredientName.displaySingular
+//    } else {
+//        ingredient.ingredientName.displayPlural
+//    }
+    // check if only one measurement exists, if so use it
+
+    // if >1 measurements exist, take the one that matches measurementSystem
+    // unless there are no matches, then take the first one
+
+    // else there are no measurements, just write ingredient name
+
+    // if chosen measurement null, just write ingredient name
+
+    // quantity + measurement unit abbreviation is measurement string
+
+    //val selectedMeasurement = getCorrectMeasurement()
+    //valgetCorrectQuantity
+
+
+
+
+//    if (ingredient.measurements.size == 1) {
+//        // add plurality check
+//        return "${ingredient.measurements[0].quantity}${ingredient.measurements[0].unit.abbreviation} ${ingredient.ingredientName.displaySingular}"
+//    } else {
+//        val correctMeasurement: Measurement? = try {
+//            val correctMeasurement = ingredient.measurements.first { measurement ->
+//                measurement.unit.system == measurementSystem
+//            }
+//            correctMeasurement
+//        } catch (e: Exception) {
+//            Log.e("RecipeScreen.kt", "METRIC OR IMPERIAL MEASUREMENTS NOT FOUND: $e")
+//            null
+//        }
+//
+//        return if (correctMeasurement == null) {
+//            ingredient.ingredientName.displaySingular
+//        } else if (correctMeasurement.unit.system == "none") {
+//            when (correctMeasurement.quantity) {
+//                "1" ->  "${correctMeasurement.quantity}${correctMeasurement.unit.abbreviation} ${ingredient.ingredientName.displaySingular}"
+//                else -> "${correctMeasurement.quantity}${correctMeasurement.unit.abbreviation} ${ingredient.ingredientName.displayPlural}"
+//            }
+//        } else {
+//            "${correctMeasurement.quantity}${correctMeasurement.unit.abbreviation} ${ingredient.ingredientName.displaySingular}"
+//        }
+//    }
+}
+
+fun getCorrectMeasurement(
+    ingredient: Ingredient,
+    measurementSystem: String
+): Measurement? {
+    return if (ingredient.measurements.size == 1) {
         ingredient.measurements[0]
     } else if (ingredient.measurements.size > 1) {
         try {
@@ -245,55 +328,10 @@ fun getCorrectMeasurementAndPlurality(
     } else {
         null
     }
-    if (chosenMeasurement == null)
-    if (chosenMeasurement.unit.system == "none") {}
-    val (unitIsPlural, nameIsPlural) = getCorrectPlurality(chosenMeasurement)
-    val unitString =
-    val nameString = if (chosenMeasurement == null) {
-        ingredient.ingredientName.displaySingular.replaceFirstChar { char ->
-            char.uppercase()
-        }
-    } else if (chosenMeasurement.quantity == "1") {
-        ingredient.ingredientName.displaySingular
-    } else {
-        ingredient.ingredientName.displayPlural
-    }
-    // check if only one measurement exists, if so use it
+}
 
-    // if >1 measurements exist, take the one that matches measurementSystem
-    // unless there are no matches, then take the first one
+fun getCorrectQuantity(correctMeasurement: Measurement?) {
 
-    // else there are no measurements, just write ingredient name
-
-    // if chosen measurement null, just write ingredient name
-
-    // quantity + measurement unit abbreviation is measurement string
-
-    if (ingredient.measurements.size == 1) {
-        // add plurality check
-        return "${ingredient.measurements[0].quantity}${ingredient.measurements[0].unit.abbreviation} ${ingredient.ingredientName.displaySingular}"
-    } else {
-        val correctMeasurement: Measurement? = try {
-            val correctMeasurement = ingredient.measurements.first { measurement ->
-                measurement.unit.system == measurementSystem
-            }
-            correctMeasurement
-        } catch (e: Exception) {
-            Log.e("RecipeScreen.kt", "METRIC OR IMPERIAL MEASUREMENTS NOT FOUND: $e")
-            null
-        }
-
-        return if (correctMeasurement == null) {
-            ingredient.ingredientName.displaySingular
-        } else if (correctMeasurement.unit.system == "none") {
-            when (correctMeasurement.quantity) {
-                "1" ->  "${correctMeasurement.quantity}${correctMeasurement.unit.abbreviation} ${ingredient.ingredientName.displaySingular}"
-                else -> "${correctMeasurement.quantity}${correctMeasurement.unit.abbreviation} ${ingredient.ingredientName.displayPlural}"
-            }
-        } else {
-            "${correctMeasurement.quantity}${correctMeasurement.unit.abbreviation} ${ingredient.ingredientName.displaySingular}"
-        }
-    }
 }
 
 /**
@@ -305,13 +343,13 @@ fun getCorrectPlurality(measurement: Measurement?): Pair<Boolean, Boolean> {
         return Pair(false, false)
     } else if (measurement.quantity == "1") {
         return when (measurement.unit.system) {
-            "none"  -> Pair(false, true)
+            "none"  -> Pair(false, false)
             else    -> Pair(false, false)
         }
     } else {
         return when (measurement.unit.system) {
-            "none"  -> Pair(true, false)
-            else    -> Pair(false, false)
+            "none", "null" -> Pair(true, true)
+            else    -> Pair(true, false)
         }
     }
 //      //take below code into account into determining plurality
@@ -348,8 +386,7 @@ fun RecipeIngredients(ingredients: List<Ingredient>, measurementSystem: String) 
             text = "• ${ getCorrectMeasurementAndPlurality(
                 ingredient = ingredient,
                 measurementSystem = measurementSystem
-            ) }" +
-                    "${ingredient.ingredientName}" +
+            )}" + "${ingredient.ingredientName}" +
                     "${ingredient.measurements}",
             color = Color.DarkGray,
             style = MaterialTheme.typography.bodyMedium,

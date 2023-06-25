@@ -92,7 +92,7 @@ fun RecipeList(
             modifier = Modifier.fillMaxSize()
         ) {
             item {
-                RecipeResultCount(totalRecipesFound = viewModel.recipes.value!!.count)
+                RecipeResultCount(totalRecipesFound = recipes.size)
             }
             itemsIndexed(recipes) { _, recipe ->
                 RecipesListItem(
@@ -101,25 +101,25 @@ fun RecipeList(
                     recipe = recipe,
                 )
             }
-            item {
-                if (!useSavedRecipes) {
-                    RecipePageSelector(
-                        currentPage = viewModel.currentPage.value!!,
-                        totalRecipesFound = viewModel.recipes.value!!.count,
-                        recipesPerPage = recipesPerPage,
-                        navigateToPage = { pageNumber ->
-                            viewModel.fetchRecipes(
-                                query = query,
-                                pageNumber = pageNumber,
-                                getApiResult = true,
-                                getDbResult = true
-                            )
-                        }
-                    )
-                } else {
-                    //RecipePageSelector for SavedRecipesScreen
-                }
-            }
+//            item {
+//                if (!useSavedRecipes) {
+//                    RecipePageSelector(
+//                        currentPage = viewModel.currentPage.value!!,
+//                        totalRecipesFound = recipes.size,
+//                        recipesPerPage = recipesPerPage,
+//                        navigateToPage = { pageNumber ->
+//                            viewModel.fetchRecipes(
+//                                query = query,
+//                                pageNumber = pageNumber,
+//                                getApiResult = true,
+//                                getDbResult = true
+//                            )
+//                        }
+//                    )
+//                } else {
+//                    //RecipePageSelector for SavedRecipesScreen
+//                }
+//            }
         }
     } else {
         Box(
