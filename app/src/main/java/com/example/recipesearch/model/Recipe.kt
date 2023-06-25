@@ -93,12 +93,16 @@ data class Recipe(
 
 data class Components(
     @SerializedName("components")
-    val ingredients: List<Ingredient>
+    val ingredients: List<Ingredient>,
+    val name: String?,
+    val position: Int
 )
 
 data class Ingredient(
     @SerializedName("raw_text")
     val rawText: String?,
+    @SerializedName("extra_comment")
+    val extraComment: String?,
     @SerializedName("ingredient")
     val ingredientName: IngredientName,
     @SerializedName("measurements")

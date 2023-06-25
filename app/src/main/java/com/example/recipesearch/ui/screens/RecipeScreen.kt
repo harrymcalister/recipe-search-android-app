@@ -224,13 +224,10 @@ fun RecipeTime(
     }
 }
 
-// Designed for 2 or fewer measurement unit options to be given, if more are given the recipe
-// will not be shown in the search results
 fun getCorrectMeasurementAndPlurality(
     ingredient: Ingredient,
     measurementSystem: String
 ): String {
-//    val ingredientMeasurements = ingredient.measurements
     val correctMeasurement: Measurement = getCorrectMeasurement(
         ingredient = ingredient,
         measurementSystem = measurementSystem
@@ -252,63 +249,6 @@ fun getCorrectMeasurementAndPlurality(
     val quantityString = correctMeasurement.quantity
 
     return "$quantityString $unitString $nameString"
-
-
-//    if (chosenMeasurement == null)
-//    if (chosenMeasurement.unit.system == "none") {}
-//    val (unitIsPlural, nameIsPlural) = getCorrectPlurality(chosenMeasurement)
-//    val unitString =
-//    val nameString = if (chosenMeasurement == null) {
-//        ingredient.ingredientName.displaySingular.replaceFirstChar { char ->
-//            char.uppercase()
-//        }
-//    } else if (chosenMeasurement.quantity == "1") {
-//        ingredient.ingredientName.displaySingular
-//    } else {
-//        ingredient.ingredientName.displayPlural
-//    }
-    // check if only one measurement exists, if so use it
-
-    // if >1 measurements exist, take the one that matches measurementSystem
-    // unless there are no matches, then take the first one
-
-    // else there are no measurements, just write ingredient name
-
-    // if chosen measurement null, just write ingredient name
-
-    // quantity + measurement unit abbreviation is measurement string
-
-    //val selectedMeasurement = getCorrectMeasurement()
-    //valgetCorrectQuantity
-
-
-
-
-//    if (ingredient.measurements.size == 1) {
-//        // add plurality check
-//        return "${ingredient.measurements[0].quantity}${ingredient.measurements[0].unit.abbreviation} ${ingredient.ingredientName.displaySingular}"
-//    } else {
-//        val correctMeasurement: Measurement? = try {
-//            val correctMeasurement = ingredient.measurements.first { measurement ->
-//                measurement.unit.system == measurementSystem
-//            }
-//            correctMeasurement
-//        } catch (e: Exception) {
-//            Log.e("RecipeScreen.kt", "METRIC OR IMPERIAL MEASUREMENTS NOT FOUND: $e")
-//            null
-//        }
-//
-//        return if (correctMeasurement == null) {
-//            ingredient.ingredientName.displaySingular
-//        } else if (correctMeasurement.unit.system == "none") {
-//            when (correctMeasurement.quantity) {
-//                "1" ->  "${correctMeasurement.quantity}${correctMeasurement.unit.abbreviation} ${ingredient.ingredientName.displaySingular}"
-//                else -> "${correctMeasurement.quantity}${correctMeasurement.unit.abbreviation} ${ingredient.ingredientName.displayPlural}"
-//            }
-//        } else {
-//            "${correctMeasurement.quantity}${correctMeasurement.unit.abbreviation} ${ingredient.ingredientName.displaySingular}"
-//        }
-//    }
 }
 
 fun getCorrectMeasurement(
@@ -330,10 +270,6 @@ fun getCorrectMeasurement(
     }
 }
 
-fun getCorrectQuantity(correctMeasurement: Measurement?) {
-
-}
-
 /**
  * @params A nullable [Measurement] for which the plurality should be evaluated
  * @return A [Boolean] [Pair] representing <unitIsPlural, nameIsPlural>
@@ -343,32 +279,38 @@ fun getCorrectPlurality(measurement: Measurement?): Pair<Boolean, Boolean> {
         return Pair(false, false)
     } else if (measurement.quantity == "1") {
         return when (measurement.unit.system) {
-            "none"  -> Pair(false, false)
-            else    -> Pair(false, false)
+            "none", "null", null -> Pair(false, false)
+            else -> Pair(false, false)
         }
     } else {
         return when (measurement.unit.system) {
-            "none", "null" -> Pair(true, true)
-            else    -> Pair(true, false)
+            "none", "null", null -> Pair(true, true)
+            else -> Pair(true, false)
         }
     }
-//      //take below code into account into determining plurality
-//    if (chosenMeasurement == null) {
-//        ""
-//    } else if (chosenMeasurement.unit.displaySingular
-//        == chosenMeasurement.unit.displaySingular) {
-//        "${chosenMeasurement.quantity}${chosenMeasurement.unit.displaySingular} "
-//    } else {
-//        if (chosenMeasurement.quantity == "1") {
-//            "${chosenMeasurement.quantity} ${chosenMeasurement.unit.displaySingular} "
-//        } else {
-//            "${chosenMeasurement.quantity} ${chosenMeasurement.unit.displayPlural} "
-//        }
-//    }
+}
+
+fun getIngredientString(
+    ingredient: Ingredient,
+    measurementSystem: String
+): String {
+    val extraComment = ingredient.extraComment ?: ""
+    val extraCommentString = if (extraComment.isNotBlank()) ", $extraComment" else ""
+    val ingredientString = ingredient.rawText ?:
+        // Backup string in case ingredient data doesn't provide 'raw_text'
+        (getCorrectMeasurementAndPlurality(
+            ingredient = ingredient,
+            measurementSystem = measurementSystem
+        ) + extraCommentString)
+
+    return "• $ingredientString"
 }
 
 @Composable
-fun RecipeIngredients(ingredients: List<Ingredient>, measurementSystem: String) {
+fun RecipeIngredients(
+    ingredients: List<Ingredient>,
+    measurementSystem: String
+) {
     Text(
         text = "Ingredients",
         color = Color.DarkGray,
@@ -383,11 +325,10 @@ fun RecipeIngredients(ingredients: List<Ingredient>, measurementSystem: String) 
 
     ingredients.forEach { ingredient ->
         Text(
-            text = "• ${ getCorrectMeasurementAndPlurality(
+            text = getIngredientString(
                 ingredient = ingredient,
                 measurementSystem = measurementSystem
-            )}" + "${ingredient.ingredientName}" +
-                    "${ingredient.measurements}",
+            ),
             color = Color.DarkGray,
             style = MaterialTheme.typography.bodyMedium,
             fontWeight = FontWeight(300),
@@ -397,58 +338,5 @@ fun RecipeIngredients(ingredients: List<Ingredient>, measurementSystem: String) 
             maxLines = Int.MAX_VALUE,
             modifier = Modifier.fillMaxWidth()
         )
-//        if (ingredient.measurements.size == 1) {
-//            Text(
-//                text = "• ${getCorrectMeasurementAndPlurality()}",
-//                color = Color.DarkGray,
-//                style = MaterialTheme.typography.bodyMedium,
-//                fontWeight = FontWeight(300),
-//                textAlign = TextAlign.Start,
-//                fontSize = 24.sp,
-//                lineHeight = 32.sp,
-//                maxLines = Int.MAX_VALUE,
-//                modifier = Modifier.fillMaxWidth()
-//            )
-//        } else if (ingredient.measurements.size > 1) {
-//            val correctMeasurement = getCorrectMeasurement(
-//                ingredient = ingredient,
-//                measurementSystem = measurementSystem
-//            )
-//            Text(
-//                text = "• ${correctMeasurement} ${}",
-//                color = Color.DarkGray,
-//                style = MaterialTheme.typography.bodyMedium,
-//                fontWeight = FontWeight(300),
-//                textAlign = TextAlign.Start,
-//                fontSize = 24.sp,
-//                lineHeight = 32.sp,
-//                maxLines = Int.MAX_VALUE,
-//                modifier = Modifier.fillMaxWidth()
-//            )
-//        }
-//        ingredient.measurements.forEach { measurement ->
-//            Text(
-//                text = "• ${measurement.quantity} ${measurement.unit}",
-//                color = Color.DarkGray,
-//                style = MaterialTheme.typography.bodyMedium,
-//                fontWeight = FontWeight(300),
-//                textAlign = TextAlign.Start,
-//                fontSize = 24.sp,
-//                lineHeight = 32.sp,
-//                maxLines = Int.MAX_VALUE,
-//                modifier = Modifier.fillMaxWidth()
-//            )
-//        }
-//        Text(
-//            text = "${ingredient.ingredientName}\n",
-//            color = Color.DarkGray,
-//            style = MaterialTheme.typography.bodyMedium,
-//            fontWeight = FontWeight(300),
-//            textAlign = TextAlign.Start,
-//            fontSize = 24.sp,
-//            lineHeight = 32.sp,
-//            maxLines = Int.MAX_VALUE,
-//            modifier = Modifier.fillMaxWidth()
-//        )
     }
 }
