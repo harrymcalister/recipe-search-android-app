@@ -117,14 +117,8 @@ data class Measurement(
     val quantity: String
 )
 
-enum class MeasurementSystem(system: String) {
-    METRIC("metric"),
-    IMPERIAL("imperial"),
-    NONE("none")
-}
-
 data class MeasurementUnit(
-    val system: MeasurementSystem,
+    val system: String,
     val name: String,
     val abbreviation: String,
     @SerializedName("display_singular")
