@@ -1,6 +1,5 @@
 package com.example.recipesearch.ui.screens
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -62,24 +61,12 @@ fun RecipeScreen(
             RecipeDivider()
         }
 
-        selectedRecipe.sections?.get(0)?.let {
-            RecipeIngredients(
-                ingredients = it.ingredients,
-                measurementSystem = "metric"
-            )
-        }
-
-        Text(
-            text = "Instructions",
-            style = MaterialTheme.typography.titleLarge
+        RecipeIngredients(
+            sections = selectedRecipe.sections!!,
+            measurementSystem = "metric"
         )
 
-        selectedRecipe.instructions!!.forEach { instruction ->
-            Text(
-                text = "${instruction.position}) ${instruction.displayText}",
-                style = MaterialTheme.typography.titleMedium
-            )
-        }
+        RecipeInstructions(instructions = selectedRecipe.instructions!!)
     }
 }
 
@@ -308,7 +295,7 @@ fun getIngredientString(
 
 @Composable
 fun RecipeIngredients(
-    ingredients: List<Ingredient>,
+    sections: List<Section>,
     measurementSystem: String
 ) {
     Text(
@@ -323,20 +310,59 @@ fun RecipeIngredients(
         modifier = Modifier.fillMaxWidth()
     )
 
-    ingredients.forEach { ingredient ->
+    sections.forEach { section ->
+
+        section.name?.let { name ->
+            Text(
+                text = name,
+                color = Color.DarkGray,
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight(300),
+                textAlign = TextAlign.Start,
+                fontSize = 24.sp,
+                lineHeight = 32.sp,
+                maxLines = 1,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+
+        section.ingredients.forEach { ingredient ->
+            Text(
+                text = getIngredientString(
+                    ingredient = ingredient,
+                    measurementSystem = measurementSystem
+                ),
+                color = Color.DarkGray,
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight(300),
+                textAlign = TextAlign.Start,
+                fontSize = 24.sp,
+                lineHeight = 32.sp,
+                maxLines = Int.MAX_VALUE,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+    }
+}
+
+@Composable
+fun RecipeInstructions(instructions: List<Instruction>) {
+    Text(
+        text = "Instructions",
+        color = Color.DarkGray,
+        style = MaterialTheme.typography.bodyMedium,
+        fontWeight = FontWeight(600),
+        textAlign = TextAlign.Start,
+        fontSize = 24.sp,
+        lineHeight = 32.sp,
+        maxLines = 1,
+        modifier = Modifier.fillMaxWidth()
+    )
+
+    instructions.forEach { instruction ->
         Text(
-            text = getIngredientString(
-                ingredient = ingredient,
-                measurementSystem = measurementSystem
-            ),
-            color = Color.DarkGray,
-            style = MaterialTheme.typography.bodyMedium,
-            fontWeight = FontWeight(300),
-            textAlign = TextAlign.Start,
-            fontSize = 24.sp,
-            lineHeight = 32.sp,
-            maxLines = Int.MAX_VALUE,
-            modifier = Modifier.fillMaxWidth()
+            text = "${instruction.position}) ${instruction.displayText}",
+            style = MaterialTheme.typography.titleMedium
         )
     }
 }

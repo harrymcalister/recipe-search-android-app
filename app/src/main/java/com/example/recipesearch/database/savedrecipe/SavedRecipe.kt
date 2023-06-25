@@ -3,9 +3,9 @@ package com.example.recipesearch.database.savedrecipe
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.example.recipesearch.model.Components
 import com.example.recipesearch.model.Instruction
 import com.example.recipesearch.model.Recipe
+import com.example.recipesearch.model.Section
 
 @Entity(tableName = "recipes")
 data class SavedRecipe(
@@ -36,7 +36,7 @@ data class SavedRecipe(
     @ColumnInfo(name = "servings_noun_singular") val servingsNounSingular: String,
     @ColumnInfo(name = "name") val name: String?,
     @ColumnInfo(name = "created_at") val createdAt: Long,
-    @ColumnInfo(name = "sections") val sections: List<Components>?,
+    @ColumnInfo(name = "sections") val sections: List<Section>?,
     @ColumnInfo(name = "compilations") val compilations: List<Any>,
     @ColumnInfo(name = "beauty_url") val beautyUrl: Any?,
     @ColumnInfo(name = "original_video_url") val originalVideoUrl: Any?,

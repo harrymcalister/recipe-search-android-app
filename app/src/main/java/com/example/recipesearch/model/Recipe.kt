@@ -48,7 +48,7 @@ data class Recipe(
     val name: String?,
     @SerializedName("created_at")
     val createdAt: Long,
-    val sections: List<Components>?,
+    val sections: List<Section>?,
     val compilations: List<Any>,
     @SerializedName("beauty_url")
     val beautyUrl: Any?,
@@ -91,7 +91,7 @@ data class Recipe(
     val updatedAt: Long
 )
 
-data class Components(
+data class Section(
     @SerializedName("components")
     val ingredients: List<Ingredient>,
     val name: String?,

@@ -1,14 +1,10 @@
 package com.example.recipesearch.database
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import androidx.room.TypeConverter
-import com.example.recipesearch.model.Components
 import com.example.recipesearch.model.Instruction
+import com.example.recipesearch.model.Section
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import java.io.ByteArrayOutputStream
-import java.sql.Date
 
 class Converters {
 
@@ -35,13 +31,13 @@ class Converters {
     }
 
     @TypeConverter
-    fun fromComponentsListToString(value: List<Components>?): String? {
+    fun fromSectionListToString(value: List<Section>?): String? {
         return Gson().toJson(value)
     }
 
     @TypeConverter
-    fun fromStringToComponentsList(value: String?): List<Components>? {
-        val listType = object : TypeToken<List<Components>?>() {}.type
+    fun fromStringToSectionList(value: String?): List<Section>? {
+        val listType = object : TypeToken<List<Section>?>() {}.type
         return Gson().fromJson(value, listType)
     }
 
