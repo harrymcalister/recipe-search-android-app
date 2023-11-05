@@ -21,6 +21,6 @@ LiveData
 Coroutines
 Room
 LazyRow/LazyColumn
-Jetpack Navigation
+Compose Navigation
 ViewModel/MVVM architecture
 Respository pattern
