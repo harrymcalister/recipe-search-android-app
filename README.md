@@ -4,4 +4,4 @@ An Android app which uses the 'Tasty' API to retrieve recipes based on a user se
 (https://rapidapi.com/apidojo/api/tasty)
 
 Goal:
-Create a simple Android app to refresh understanding on the Android SDK.
+Create a simple Android app to practice creating a full-stack Android application
